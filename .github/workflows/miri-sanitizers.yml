@@ -1,0 +1,110 @@
+name: Miri and Sanitizers
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+env:
+  HARDENING_TOOLCHAIN: nightly-2025-07-14
+
+jobs:
+  miri:
+    name: miri validator subset
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: ${{ env.HARDENING_TOOLCHAIN }}
+          components: miri
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+        with:
+          cache-bin: false
+          cache-targets: false
+
+      - name: Run Miri suite
+        run: |
+          chmod +x scripts/run_miri_suite.sh scripts/hardening_test_names.sh
+          scripts/run_miri_suite.sh
+
+  address-sanitizer:
+    name: address sanitizer validator subset
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: ${{ env.HARDENING_TOOLCHAIN }}
+          components: rust-src
+
+      - name: Read host target
+        id: host-target
+        env:
+          HARDENING_TOOLCHAIN: ${{ env.HARDENING_TOOLCHAIN }}
+        run: |
+          echo "target=$(rustc +\"$HARDENING_TOOLCHAIN\" -vV | awk '/^host: / { print $2 }')" >> "$GITHUB_OUTPUT"
+
+      - name: Install host target
+        env:
+          HARDENING_TOOLCHAIN: ${{ env.HARDENING_TOOLCHAIN }}
+          HOST_TARGET: ${{ steps.host-target.outputs.target }}
+        run: |
+          rustup +"$HARDENING_TOOLCHAIN" target add "$HOST_TARGET"
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+        with:
+          cache-bin: false
+          cache-targets: false
+
+      - name: Run address sanitizer suite
+        env:
+          SANITIZER_TARGET: ${{ steps.host-target.outputs.target }}
+        run: |
+          chmod +x scripts/run_asan_suite.sh scripts/hardening_test_names.sh
+          scripts/run_asan_suite.sh
+
+  ub-checks:
+    name: undefined-behavior checks validator subset
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: ${{ env.HARDENING_TOOLCHAIN }}
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+        with:
+          cache-bin: false
+          cache-targets: false
+
+      - name: Run UB-checks suite
+        run: |
+          chmod +x scripts/run_ub_checks_suite.sh scripts/hardening_test_names.sh
+          scripts/run_ub_checks_suite.sh

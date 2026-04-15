@@ -1,0 +1,11 @@
+generated_at_utc: 2026-04-07T09:42:11Z
+repo_root: .
+git_commit: 3cb6d55e9fdc39ab729f7cff910976163e2814f0
+git_commit_short: 3cb6d55
+git_branch: codex/publication-ready-stwo-bundle
+rustc: rustc 1.90.0-nightly (e9182f195 2025-07-13)
+cargo: cargo 1.90.0-nightly (eabb4cd92 2025-07-09)
+host_platform: Darwin 23.6.0 arm64
+nightly_toolchain: +nightly-2025-07-14
+bundle_dir: docs/paper/artifacts/stwo-experimental-v1-2026-04-06
+fixtures: addition, shared-normalization-demo, gemma_block_v4, decoding_demo

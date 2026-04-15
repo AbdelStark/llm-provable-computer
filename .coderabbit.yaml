@@ -1,0 +1,89 @@
+# yaml-language-server: $schema=https://coderabbit.ai/integrations/schema.v2.json
+language: en-US
+
+early_access: false
+enable_free_tier: false
+tone_instructions: |
+  Prioritize correctness, security, proof soundness, and regression risk. Avoid
+  style-only remarks and repository-genealogy commentary. Prefer concise,
+  actionable findings with concrete failing-path or tamper-path guidance.
+reviews:
+  profile: assertive
+  request_changes_workflow: false
+  high_level_summary: true
+  changed_files_summary: true
+  high_level_summary_in_walkthrough: false
+  poem: false
+  review_status: true
+  commit_status: true
+  collapse_walkthrough: true
+  sequence_diagrams: false
+  assess_linked_issues: false
+  related_issues: false
+  related_prs: false
+  suggested_labels: false
+  suggested_reviewers: false
+  auto_review:
+    enabled: true
+    auto_incremental_review: true
+    drafts: false
+    base_branches:
+      - main
+      - codex/.*
+    labels: []
+    ignore_title_keywords:
+      - WIP
+      - DO NOT MERGE
+      - artifact-only
+      - docs-only
+    ignore_usernames:
+      - github-actions[bot]
+      - dependabot[bot]
+      - coderabbitai[bot]
+      - qodo-code-review
+      - greptile-app[bot]
+  path_filters:
+    - .coderabbit.yaml
+    - .greptile/**
+    - .pr_agent.toml
+    - .gitignore
+    - src/**
+    - tests/**
+    - programs/**
+    - scripts/**
+    - .github/**
+    - README.md
+    - docs/**/*.md
+    - '!scripts/node_modules/**'
+    - '!docs/artifacts/**'
+    - '!docs/paper/artifacts/**'
+    - '!docs/paper/evidence/**'
+    - '!docs/paper/figures/**'
+    - '!compiled/**'
+  path_instructions:
+    - path: 'src/stwo_backend/**'
+      instructions: |
+        Review aggressively for proof soundness, AIR/trace consistency, statement and backend version drift, replay invariants, layout/address arithmetic, carry/overflow assumptions, and any mismatch between embedded lookup claims and executed semantics. Treat correctness regressions as high priority. Ignore style-only remarks.
+    - path: 'src/bin/tvm.rs'
+      instructions: |
+        Focus on CLI behavior drift, proof-manifest IO safety, flag handling, and whether commands overclaim backend support. Prefer findings about broken workflows over formatting.
+    - path: 'tests/**'
+      instructions: |
+        Check that tests lock semantic behavior, tamper paths, and negative cases. Call out missing regressions when a PR changes proof semantics without adding failing-path coverage.
+    - path: 'scripts/**'
+      instructions: |
+        Treat these as reproducibility and artifact-generation code. Focus on determinism, path safety, environment assumptions, integrity metadata, and whether regenerated outputs can silently drift.
+    - path: '.github/workflows/**'
+      instructions: |
+        Review for CI coverage loss, missing feature combinations, silent matrix gaps, cache misuse, and workflows that no longer match the documented toolchain requirements.
+    - path: 'README.md'
+      instructions: |
+        Review aggressively for claim drift versus the actual repository behavior. Flag scope inflation, outdated commands, unsupported backend claims, and missing prerequisites.
+    - path: 'docs/**/*.md'
+      instructions: |
+        Review technical docs for alignment with code and proofs. Ignore pure prose taste, but flag any mismatch in supported phases, artifact semantics, backend capabilities, or reproducibility steps.
+chat:
+  auto_reply: false
+knowledge_base:
+  learnings:
+    scope: auto

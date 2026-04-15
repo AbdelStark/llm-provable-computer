@@ -1,0 +1,49 @@
+# Keep the cargo-deny advisory and yanked-package exceptions here aligned with
+# docs/engineering/dependency-audit-exceptions.md. Unsound advisories and
+# package-scoped yanked exceptions are also enforced by the audit script
+# because cargo-audit cannot ignore individual yanked crate versions.
+[graph]
+all-features = true
+
+[output]
+feature-depth = 1
+
+[advisories]
+yanked = "deny"
+ignore = [
+  { crate = "core2@0.4.0", reason = "burn-dataset/image/ravif still pin the only currently-compatible yanked core2 release; remove this once the upstream chain moves off core2 0.4.0." },
+  { id = "RUSTSEC-2025-0141", reason = "burn 0.20.1 still depends on bincode 2.0.1; no compatible patch release is available and the burn-model surface remains optional." },
+  { id = "RUSTSEC-2024-0388", reason = "stwo 2.2.0 transitively depends on derivative 2.2.0 via starknet-ff 0.3.7; no compatible patch release is available." },
+  { id = "RUSTSEC-2024-0436", reason = "paste 1.0.15 remains in the ark-ff 0.5.0 and ratatui 0.29.0 dependency chains; no compatible patch release is available." },
+]
+
+[licenses]
+allow = [
+  "0BSD",
+  "Apache-2.0",
+  "BSD-2-Clause",
+  "BSD-3-Clause",
+  "CC0-1.0",
+  "MIT",
+  "MPL-2.0",
+  "NCSA",
+  "Unicode-3.0",
+  "Zlib",
+]
+confidence-threshold = 0.93
+
+[licenses.private]
+ignore = true
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+highlight = "all"
+skip = [
+  { crate = "unicode-width@0.1.14", reason = "ratatui 0.29.0 still depends on unicode-width 0.1 and 0.2 through unicode-truncate." },
+  { crate = "windows-sys@0.59.0", reason = "target-specific duplicate retained by crossterm/rustix transitive dependencies." },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

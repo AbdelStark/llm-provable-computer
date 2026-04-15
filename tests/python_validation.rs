@@ -124,6 +124,39 @@ fn python_validator_matches_native_trace_for_shipped_programs() {
             false,
         ),
         (
+            "programs/dot_product.tvm",
+            TransformerVmConfig {
+                num_layers: 2,
+                ..TransformerVmConfig::default()
+            },
+            "dot_product",
+            70i16,
+            128usize,
+            false,
+        ),
+        (
+            "programs/matmul_2x2.tvm",
+            TransformerVmConfig {
+                num_layers: 2,
+                ..TransformerVmConfig::default()
+            },
+            "matmul_2x2",
+            134i16,
+            256usize,
+            false,
+        ),
+        (
+            "programs/single_neuron.tvm",
+            TransformerVmConfig {
+                num_layers: 2,
+                ..TransformerVmConfig::default()
+            },
+            "single_neuron",
+            1i16,
+            128usize,
+            false,
+        ),
+        (
             "programs/memory_roundtrip.tvm",
             TransformerVmConfig {
                 num_layers: 2,

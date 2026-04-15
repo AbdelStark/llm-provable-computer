@@ -1,0 +1,2 @@
+ea475a661173faa919bf6d6888a33ee15dc25f764a5a3d5b66da0049fb16758f  soft_attention_memory-step.json
+02268849e688ff8ab3be295c02819f3421677474ab4f8bf59b82812491eab3a1  soft_attention_memory-trace.json

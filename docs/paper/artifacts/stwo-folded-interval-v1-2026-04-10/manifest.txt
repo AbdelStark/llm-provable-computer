@@ -1,0 +1,11 @@
+generated_at_utc: 2026-04-10T10:13:41Z
+repo_root: .
+git_commit: d5b16c34b31dc2bc610e6d56505306f02e5c0f99
+git_commit_short: d5b16c3
+git_branch: codex/phase26-folded-interval-accumulator-v1
+rustc: rustc 1.90.0-nightly (e9182f195 2025-07-13)
+cargo: cargo 1.90.0-nightly (eabb4cd92 2025-07-09)
+host_platform: Darwin 23.6.0 arm64
+nightly_toolchain: +nightly-2025-07-14
+bundle_dir: docs/paper/artifacts/stwo-folded-interval-v1-2026-04-10
+fixtures: decoding_state_relation_accumulator_phase24, intervalized_decoding_state_relation_phase25, folded_intervalized_decoding_state_relation_phase26

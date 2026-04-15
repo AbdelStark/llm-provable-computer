@@ -1,0 +1,20 @@
+[2026-04-04T17:28:47Z] run_addition :: cargo run --bin tvm -- run programs/addition.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:48Z] run_counter :: cargo run --bin tvm -- run programs/counter.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:49Z] run_fibonacci :: cargo run --bin tvm -- run programs/fibonacci.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:50Z] run_factorial_recursive :: cargo run --bin tvm -- run programs/factorial_recursive.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:51Z] run_multiply :: cargo run --bin tvm -- run programs/multiply.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:51Z] run_soft_attention_memory :: cargo run --bin tvm -- run programs/soft_attention_memory.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:52Z] run_dot_product :: cargo run --bin tvm -- run programs/dot_product.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:53Z] run_matmul_2x2 :: cargo run --bin tvm -- run programs/matmul_2x2.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:53Z] run_single_neuron :: cargo run --bin tvm -- run programs/single_neuron.tvm --verify-native --max-steps 256
+[2026-04-04T17:28:54Z] prove_addition :: cargo run --bin tvm -- prove-stark programs/addition.tvm -o /tmp/llm-provable-computer-repro-production-v1-20260404/addition.proof.json --stark-profile production-v1 --max-steps 256
+[2026-04-04T17:30:05Z] verify_addition :: cargo run --bin tvm -- verify-stark /tmp/llm-provable-computer-repro-production-v1-20260404/addition.proof.json --verification-profile production-v1 --reexecute
+[2026-04-04T17:30:07Z] prove_dot_product :: cargo run --bin tvm -- prove-stark programs/dot_product.tvm -o /tmp/llm-provable-computer-repro-production-v1-20260404/dot_product.proof.json --stark-profile production-v1 --max-steps 256
+[2026-04-04T17:37:17Z] verify_dot_product :: cargo run --bin tvm -- verify-stark /tmp/llm-provable-computer-repro-production-v1-20260404/dot_product.proof.json --verification-profile production-v1 --reexecute
+[2026-04-04T17:37:22Z] prove_single_neuron :: cargo run --bin tvm -- prove-stark programs/single_neuron.tvm -o /tmp/llm-provable-computer-repro-production-v1-20260404/single_neuron.proof.json --stark-profile production-v1 --max-steps 256
+[2026-04-04T17:43:52Z] verify_single_neuron :: cargo run --bin tvm -- verify-stark /tmp/llm-provable-computer-repro-production-v1-20260404/single_neuron.proof.json --verification-profile production-v1 --reexecute
+[2026-04-04T17:43:56Z] prove_fibonacci :: cargo run --bin tvm -- prove-stark programs/fibonacci.tvm -o /tmp/llm-provable-computer-repro-production-v1-20260404/fibonacci.proof.json --stark-profile production-v1 --max-steps 256
+[2026-04-04T17:58:12Z] verify_fibonacci :: cargo run --bin tvm -- verify-stark /tmp/llm-provable-computer-repro-production-v1-20260404/fibonacci.proof.json --verification-profile production-v1 --reexecute
+[2026-04-04T17:58:16Z] research_v2_step_dot_product :: cargo run --features onnx-export --bin tvm -- research-v2-step programs/dot_product.tvm -o /tmp/llm-provable-computer-repro-production-v1-20260404/research-v2-dot-product-step.json --max-steps 1
+[2026-04-04T17:58:19Z] research_v2_trace_dot_product :: cargo run --features onnx-export --bin tvm -- research-v2-trace programs/dot_product.tvm -o /tmp/llm-provable-computer-repro-production-v1-20260404/research-v2-dot-product-trace.json --max-steps 16
+[2026-04-04T17:58:20Z] research_v2_matrix_default_suite :: cargo run --features onnx-export --bin tvm -- research-v2-matrix -o /tmp/llm-provable-computer-repro-production-v1-20260404/research-v2-matrix-default-suite.json --include-default-suite --max-steps 64

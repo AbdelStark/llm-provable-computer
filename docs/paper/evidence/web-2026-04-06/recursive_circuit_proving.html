@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>StarkWare&#x27;s S-two: Unlocking Efficiency with Recursive Circuit Proving</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; line-height: 1.45; color: #111; }
+    h1, h2 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f7f7f7; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+    .meta { margin-bottom: 1.5rem; }
+    .meta li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>StarkWare&#x27;s S-two: Unlocking Efficiency with Recursive Circuit Proving</h1>
+  <p>This is an inert, repo-local evidence wrapper. It stores browser-rendered visible text and content hashes so the snapshot can be inspected without executing third-party scripts or loading remote assets.</p>
+  <ul class="meta">
+    <li><strong>Label:</strong> <code>recursive_circuit_proving</code></li>
+    <li><strong>Source URL:</strong> <code>https://starkware.co/blog/minutes-to-seconds-efficiency-gains-with-recursive-circuit-proving/</code></li>
+    <li><strong>Rendered HTML SHA-256:</strong> <code>83f3a60c020140d8ead9144da293d1d184f3b0820aaeae323898e4786fe10fbb</code></li>
+  </ul>
+  <h2>Rendered Visible Text</h2>
+  <pre>Want a cookie?
+
+Our website use cookies. By continuing, we assume your permission to deploy cookies as detailed in our Cookies Policy.
+
+Decline
+Accept
+Skip to content
+Starknet
+StarkEx
+Product
+Documentation
+Playground
+Ecosystem
+Developers
+Cairo
+StarkWare Labs
+Tech Stack
+STARK 101
+Resources
+StarkWare Blog
+Integrity Matters Blog
+STARK
+Overview
+STARKs over Bitcoin
+Company
+Vision and Mission
+About Us
+Careers
+Media Kit
+CONTACT US
+JOIN OUR NEWSLETTER
+
+Home » StarkWare Blog » Minutes to Seconds: Efficiency Gains with Recursive Circuit Proving
+Published on: March 31, 2026
+Minutes to Seconds: Efficiency Gains with Recursive Circuit Proving
+
+Share
+
+StarkWare, led by Eli Ben-Sasson, a co-inventor of the zk-STARK proof system, is committed to pushing the boundaries of what’s possible with its tech. And the evolution of our proving systems is a prime example of this. Circuit-based recursive proving is delivering efficiency gains to our next-generation S-two prover that were not previously possible.
+
+With recursive circuit proving, the validation process is being reduced from minutes of computational effort to just seconds. In addition, the costs and hardware requirements are being slashed with these tailored, optimized circuits. We’ll get into that and the difference between recursive proving and circuit-based recursive proving below.
+
+Back to Basics: Proving Systems and the Validation Process
+
+Most systems today still rely on trust. A payment goes through, a trade settles, a blockchain updates. And if you want to verify a transaction is valid, you need to re-execute it. Re-running transactions just to make sure they were executed correctly makes the entire network slow, expensive, and inefficient.
+
+In the blockchain context, proving systems change this. One party, known as the prover, does the work and produces a proof. Another party, known as the verifier, checks the proof and concludes it was done correctly. The prover does not share the transaction’s data (things like sender, receiver, amount), as the verifier does not require it to verify the information.
+
+Similar to the way that a proof attests to the validity of multiple transactions, with recursive proving, a single proof is generated that attests to the validity of multiple proofs. This allows large computations to be split, proven in parallel, and aggregated, keeping the final output small and fast, regardless of how much the underlying data grows.
+
+Previously, recursive proving on Starknet was done using Cairo. Cairo allows expressing general computational statements that can be proven by STARK proofs and verified by the corresponding STARK verifiers. In the same way that the execution of Cairo code handling thousands of transactions can be proven, one can also prove the execution of Cairo code that verifies multiple STARK proofs. This method is effective, but comes with overhead, since Cairo is a general-purpose, high-level programming language. When done numerous times, as is the case with verification in recursive proving, this overhead becomes substantial.
+
+The Upgrade from Cairo Recursion to Circuit-Based Recursion
+
+Now, we are moving to circuit-based recursion, which overcomes the overhead experienced with Cairo-based recursive proving. Instead of running a general-purpose program on a larger field, we encode the verifier as a fixed arithmetic circuit over the smaller M31 field. The fact that the circuit is tailored to proving recursion makes it much more efficient. Building circuits is more challenging than writing code, but the result is worth it, as explained below.
+
+Efficiency Gains with Circuit-Based Recursion
+
+The circuit verifier enables much faster proving of verification itself while producing significantly smaller proofs, unlocking clear efficiency gains.
+
+Latency: Proving the Cairo verifier takes about 1 minute, while proving the circuit verifier takes just 3 seconds. That’s a 95% decrease in latency and computational resources!
+Hardware: Proving the circuit verifier is now possible on a common laptop, while proving the Cairo verifier required dedicated machines with ample memory.
+Reduced costs: Circuit-based recursion produces smaller proofs, which are cheaper to generate and verify.
+
+What Circuit-Based Recursion Unlocks
+Privacy
+
+Until now, fast proving was a missing element for meaningful on-chain privacy. Confidential DeFi, private payments, and zk-identity systems all require a massive volume of proofs to remain secure without exposing user data. By leveraging S-two’s circuit recursion, these complex flows become computationally light enough for real-world, scalable adoption.
+
+In the last month, Starknet has delivered major privacy announcements with STRK20 and strkBTC. STRK20 is a protocol-level framework that brings privacy capabilities to ERC20s on Starknet, enabling private transfers, staking, and anonymous swaps in DEXs. These private transactions require high throughput (and therefore efficient proving) at low cost, which is enabled by in-protocol S-two proofs.
+
+Decentralization
+
+As proving becomes more hardware-efficient, it becomes possible to distribute the workload across a broad network of participants rather than a few large operators. This is an important step towards a fully decentralized Starknet, where the proving layer itself can be decentralized.
+
+Client-Side Proving
+
+The reduced proving costs achieved by circuit-based recursion also bring S-two a step closer to client-side proving. Clients will be able to generate smaller proofs using circuit-based recursion and send smaller proofs over the network.
+
+Faster Settlement
+
+Starknet is working on achieving faster settlement times as an L2 on top of Ethereum. This requires faster proof aggregation by SHARP. To achieve this, SHARP will soon incorporate circuit-based recursive proving, and the L1 verifier (solidity) will be changed to verify a S-two circuit proof.
+
+Stay Tuned
+
+StarkWare is committed to consistently pushing its technology to greater heights. By advancing from Cairo-based recursion to circuit-based recursion, we are pushing our proving tech to be ever more efficient and optimized to fit more everyday use cases.
+
+Stay tuned to learn about what’s next for S-two.
+
+And keep an eye on the StarkWare website and the StarkWare and Starknet X handles to stay informed about other tech news and updates.
+
+ON THIS PAGE
+Back to Basics: Proving Systems and the Validation Process
+The Upgrade from Cairo Recursion to Circuit-Based Recursion
+What Circuit-Based Recursion Unlocks
+Stay Tuned
+More From The Starkware Collection
+Cairo
+Developers
+Stwo
+Introducing S-two 2.0.0 for Developers
+
+StarkWare’s Next-Generation Prover Suite is Now Fully Open Source and Available for…
+
+January 27, 2026
+
+Paradex &amp; S-two: The Fastest Prover Meets the Fastest Appchain
+
+TL;DR Following our recent announcement that S-two is live on Starknet Mainnet,…
+
+December 11, 2025
+
+Stwo
+Introducing S-two: The fastest prover for real-world ZK applications
+
+S-two, StarkWare’s next-generation prover, is now available for builders and devs—and it’s…
+
+May 26, 2025
+
+Subscribe to our mailing list
+
+Follow us
+Twitter
+Medium
+LinkedIn
+Youtube
+Github
+Starknet
+Starknet Documentation
+StarkEx
+StarkEx Ecosystem
+STARK 101
+StarkWare Delegation Program
+Vision and Mission
+About Us
+Careers
+StarkWare-Blog
+Media Kit
+Cairo for Developers
+Open Source License
+Licenses
+Terms of Use
+Privacy Policy
+
+© 2025 All Rights Reserved</pre>
+</body>
+</html>

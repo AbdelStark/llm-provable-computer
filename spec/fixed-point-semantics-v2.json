@@ -1,0 +1,19 @@
+{
+  "version": "fixed-point-semantics-v2",
+  "profile_id": "i16-state-f32-carrier-round-nearest-v1",
+  "state_encoding": {
+    "pc": "u8",
+    "acc": "i16",
+    "sp": "u8",
+    "zero_flag": "bool",
+    "carry_flag": "bool",
+    "halted": "bool",
+    "memory_cell": "i16"
+  },
+  "onnx_carrier": {
+    "type": "float32",
+    "rounding": "round_to_nearest_ties_away_from_zero",
+    "boolean_threshold": "x >= 0.5"
+  },
+  "notes": "Research v2 draft profile for one-step transformer/ONNX semantic equivalence artifacts."
+}

@@ -1,0 +1,43 @@
+{
+  "files": [
+    {
+      "path": "README.md",
+      "description": "Top-level repository scope, supported proof surfaces, and user entrypoint."
+    },
+    {
+      "path": "docs/design/stwo-backend-design.md",
+      "description": "Canonical design note for the experimental stwo backend, decoding phases, carried-state packaging, and lookup semantics.",
+      "scope": ["src/stwo_backend/**", "tests/**", "src/bin/tvm.rs"]
+    },
+    {
+      "path": "docs/reproducibility.md",
+      "description": "Reproducibility requirements for bundles, figures, scripts, toolchains, and reviewable artifact generation.",
+      "scope": ["scripts/**", "docs/**", ".github/workflows/**"]
+    },
+    {
+      "path": ".coderabbit.yaml",
+      "description": "CodeRabbit review policy for this repository. Relevant when review behavior, path filters, or bot signal quality changes."
+    },
+    {
+      "path": ".pr_agent.toml",
+      "description": "Qodo review policy for this repository. Relevant when automatic review triggers, ignore filters, or proof-oriented review instructions change."
+    },
+    {
+      "path": "best_practices.md",
+      "description": "Repository-specific Qodo best practices used to reinforce proof-soundness and regression expectations."
+    },
+    {
+      "path": ".github/workflows/ci.yml",
+      "description": "Required CI matrix for stable/full/onnx-export/burn-model coverage and ONNX validation workflow.",
+      "scope": ["src/**", "tests/**", "scripts/**", ".github/workflows/**"]
+    },
+    {
+      "path": "docs/paper/stark-transformer-alignment-2026.md",
+      "description": "Current released architecture/complexity paper. Relevant when reviewing README and scope claims."
+    },
+    {
+      "path": "docs/paper/proof-carrying-decoding-2026.md",
+      "description": "Next-paper draft describing proof-carrying decoding, carried-state layers, and lookup/KV boundaries. Relevant when reviewing decoding-related claims."
+    }
+  ]
+}

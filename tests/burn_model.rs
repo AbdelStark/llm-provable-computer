@@ -77,6 +77,24 @@ fn burn_verifies_against_native_engines_for_shipped_programs() {
             21,
         ),
         (
+            "programs/dot_product.tvm",
+            128,
+            TransformerVmConfig::default(),
+            70,
+        ),
+        (
+            "programs/matmul_2x2.tvm",
+            256,
+            TransformerVmConfig::default(),
+            134,
+        ),
+        (
+            "programs/single_neuron.tvm",
+            128,
+            TransformerVmConfig::default(),
+            1,
+        ),
+        (
             "programs/multiply.tvm",
             256,
             TransformerVmConfig::default(),

@@ -1,0 +1,5 @@
+1890acc9ed5adadee330153cf28ca67b6c1408ca7244dc607346d627b5a7ba06  README.md
+e2d96e64343792653b9f15a5fa3a96d8269e33f97ae585d532f8e7c699dfc020  decoding-phase24.state-relation-accumulator.json.gz
+76fd688b45a9eb16005346312df5ef0beec18c981b5c9c565b4ff55605a97950  decoding-phase25.intervalized-state-relation.json.gz
+67a0eecae5d3d9ca9c53d3d1c9ac79afbf49c6f7f5539ec87ac251ac10aa3138  decoding-phase26.folded-intervalized-state-relation.json.gz
+3c376f1acc5081b5921795528026b44ffece3278d0d93af27289b536d0f81976  decoding-phase27.chained-folded-intervalized-state-relation.json.gz

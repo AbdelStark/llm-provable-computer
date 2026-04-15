@@ -1,0 +1,7 @@
+{
+  "statement_version": "statement-v1",
+  "semantic_scope": "native_isa_execution_with_transformer_native_equivalence_check",
+  "commitment_scheme_version": "v1",
+  "commitment_hash_function": "blake2b-256",
+  "notes": "This spec defines the externally claimable statement envelope for v1 proofs. Verifier enforcement must match these values exactly."
+}

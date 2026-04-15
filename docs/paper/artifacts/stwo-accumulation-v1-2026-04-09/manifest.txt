@@ -1,0 +1,11 @@
+generated_at_utc: 2026-04-09T19:47:18Z
+repo_root: .
+git_commit: afa856237c53b5507a0335ce4bf0f802099504fc
+git_commit_short: afa8562
+git_branch: codex/phase23-eval-bundle-v1
+rustc: rustc 1.90.0-nightly (e9182f195 2025-07-13)
+cargo: cargo 1.90.0-nightly (eabb4cd92 2025-07-09)
+host_platform: Darwin 23.6.0 arm64
+nightly_toolchain: +nightly-2025-07-14
+bundle_dir: docs/paper/artifacts/stwo-accumulation-v1-2026-04-09
+fixtures: decoding_chain_phase12, decoding_rollup_matrix_phase17, decoding_matrix_accumulator_phase21, decoding_lookup_accumulator_phase22, decoding_cross_step_lookup_accumulator_phase23

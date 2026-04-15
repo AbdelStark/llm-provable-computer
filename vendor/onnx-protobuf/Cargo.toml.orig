@@ -1,0 +1,17 @@
+[package]
+name = "onnx-protobuf"
+version = "0.2.3"
+authors = ["Aster <192607617@qq.com>"]
+description = "ONNX protocol buffers messages."
+repository = "https://github.com/oovm/Airs/tree/dev/projects/onnx-protobuf"
+documentation = "https://docs.rs/onnx-protobuf"
+readme = "readme.md"
+license = "MPL-2.0"
+edition = "2021"
+exclude = ["tests/*"]
+
+[dependencies]
+protobuf = "3.7.2"
+
+[dev-dependencies]
+protobuf-codegen = "3.7.2"

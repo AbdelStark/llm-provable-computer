@@ -1,0 +1,9 @@
+label	seconds
+prove_addition_stwo	2
+verify_addition_stwo	1
+prove_shared_normalization_stwo	1
+verify_shared_normalization_stwo	1
+prove_gemma_block_v4_stwo	1
+verify_gemma_block_v4_stwo	1
+prove_decoding_demo_stwo	1
+verify_decoding_demo_stwo	1

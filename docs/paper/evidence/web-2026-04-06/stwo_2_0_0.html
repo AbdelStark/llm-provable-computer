@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>S-Two 2.0.0 is a Developer-Friendly, Fully Open-Source Toolkit</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; line-height: 1.45; color: #111; }
+    h1, h2 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f7f7f7; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+    .meta { margin-bottom: 1.5rem; }
+    .meta li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>S-Two 2.0.0 is a Developer-Friendly, Fully Open-Source Toolkit</h1>
+  <p>This is an inert, repo-local evidence wrapper. It stores browser-rendered visible text and content hashes so the snapshot can be inspected without executing third-party scripts or loading remote assets.</p>
+  <ul class="meta">
+    <li><strong>Label:</strong> <code>stwo_2_0_0</code></li>
+    <li><strong>Source URL:</strong> <code>https://starkware.co/blog/s-two-2-0-0-prover-for-developers/</code></li>
+    <li><strong>Rendered HTML SHA-256:</strong> <code>c70b4f2dc93ae019d2f37f82a2138f2eab4bc6de06b2af0dd5974c2357e2fe79</code></li>
+  </ul>
+  <h2>Rendered Visible Text</h2>
+  <pre>Want a cookie?
+
+Our website use cookies. By continuing, we assume your permission to deploy cookies as detailed in our Cookies Policy.
+
+Decline
+Accept
+Skip to content
+Starknet
+StarkEx
+Product
+Documentation
+Playground
+Ecosystem
+Developers
+Cairo
+StarkWare Labs
+Tech Stack
+STARK 101
+Resources
+StarkWare Blog
+Integrity Matters Blog
+STARK
+Overview
+STARKs over Bitcoin
+Company
+Vision and Mission
+About Us
+Careers
+Media Kit
+CONTACT US
+JOIN OUR NEWSLETTER
+
+Home » StarkWare Blog » Introducing S-two 2.0.0 for Developers
+Published on: January 27, 2026
+Introducing S-two 2.0.0 for Developers
+
+Share
+
+StarkWare’s Next-Generation Prover Suite is Now Fully Open Source and Available for Developers
+
+Learning Cairo? Building production applications? Creating custom proving infrastructure? Thinking of building an appchain? S-two 2.0.0 is ready to be integrated and operated by you. We are excited to announce the release of S-two 2.0.0, a new version of S-two that is fully open source and ready to integrate into all developers’ projects, all through crates.io.
+
+We recently announced that StarkWare’s fully open-source next-generation prover, S-two, is live on Starknet mainnet, securing every Starknet block with Circle STARKs technology. Today, between Starknet and StarEx, S-two is powering 20% of the entire Perp market: Extended (on public Starknet), Paradex (Starknet appchain), and edgeX (on StarkEx), all with unprecedented speed and performance.
+
+Why S-two 2.0.0?
+
+With S-two 2.0.0, we’ve turned the prover that secures Starknet into a developer-friendly, open-source toolkit. S-two is now semantically versioned, published on crates.io, and usable at multiple levels of abstraction, from one-command proving with Scarb, through programmatic Cairo proving APIs, to a flexible core library for custom AIRs. The result is faster onboarding, clearer integration paths, and the ability to use the same high-performance Circle STARK prover, whether you’re building something in AI, gaming, privacy, DeFi, or custom proving infrastructure.
+
+We will describe these solutions in more detail below.
+
+Three Ways to Use S-two
+1. Experiment with proving Cairo execution with Scarb
+
+If you’re just getting started with Cairo or want to write a small program, scarb prove is the easiest way to generate a Cairo proof for your program’s execution. Install the latest Scarb, write your Cairo program, and generate proofs with a single command:
+
+scarb prove –execute –arguments-file &lt;path-to-cairo-serde-json-file&gt;
+
+Use this when you:
+
+Are new to Cairo or zero-knowledge proofs
+Want to test small programs quickly
+Are learning how proving works without infrastructure overhead
+Are looking for a benchmark of the exact timing for your Cairo programs
+2. Build interfaces for proving Cairo programs with S-two Cairo Library
+
+For production applications, future zkThreads, or custom proving pipelines, use the stwo-cairo repository or add a dependency on the crate to your Rust project. This gives you programmatic control over the proving workflow while leveraging Cairo’s optimized constraint system, which proves VM execution correctness, rather than individual arithmetic statements.
+
+For bootloaders, multi-program proving, or advanced Cairo VM integration, check out the proving-utils repository. Currently, it provides a high-level proving interface with built-in Cairo runner as well as custom hints for bootloaders used in SHARP and Atlantic. This is ideal for parallel proving, proof aggregation, or integrating proofs into larger systems.
+
+Use this when you:
+
+Are building zkThreads or parallel proving architectures
+Need fine-grained control over the proving pipeline
+Are building a recursive proving pipeline
+Are building an L3
+Are proving a very large program
+Are integrating Cairo proofs into production applications
+3. Build a custom prover with S-two Core Library
+
+If you’re building custom AIRs, experimenting with new proof systems, or working with non-Cairo computations, use the core S-two library. Get the same blazing-fast Circle STARK performance, but with complete flexibility to define your own constraints. Explore the documentation here.
+
+Use this when you:
+
+Are creating your own constraints and then proving them using S-two
+Want the fastest general-purpose prover available
+Are creating tools, research projects, or new proving applications
+Start Building Today
+
+S-two 2.0.0 makes high-performance proving of Cairo programs accessible to developers: it is open source, versioned, and easy to integrate, whether you’re developing in Cairo or building custom proving systems.
+
+The code is open. The libraries are published. The documentation is ready. Pick your path and start proving with S-two 2.0.0.
+
+Explore the community-curated Awesome S-two list for more resources and projects building on S-two.
+
+Resources:
+
+S-two on crates.io
+S-two Book
+S-two Cairo GitHub
+Proving Utils GitHub
+S-two GitHub
+Cairo package registry
+We Want Your Feedback
+
+S-two is built in collaboration with the community. Found a bug? Have a feature request? Want to suggest improvements?
+
+Share your thoughts through our feedback form. Your input directly shapes the roadmap and helps us prioritize what matters most to developers.
+
+ON THIS PAGE
+StarkWare’s Next-Generation Prover Suite is Now Fully Open Source and Available for Developers
+Why S-two 2.0.0?
+Three Ways to Use S-two
+Start Building Today
+We Want Your Feedback
+More From The Starkware Collection
+Partners
+Starknet
+Institutional Privacy is Moving Onchain: Nightfall Deploys on Starknet
+
+Institutions want the benefits of blockchain without exposing sensitive data. The deployment…
+
+February 17, 2026
+
+Post-Quantum security
+Bitcoin’s quantum proposal features StarkWare co-author
+
+We’re proud to share that Isabel Foxen Duke, who leads Bitcoin Growth…
+
+February 16, 2026
+
+Recursion
+Stwo
+Stwo
+Minutes to Seconds: Efficiency Gains with Recursive Circuit Proving
+
+StarkWare, led by Eli Ben-Sasson, a co-inventor of the zk-STARK proof system,…
+
+March 31, 2026
+
+Subscribe to our mailing list
+
+Follow us
+Twitter
+Medium
+LinkedIn
+Youtube
+Github
+Starknet
+Starknet Documentation
+StarkEx
+StarkEx Ecosystem
+STARK 101
+StarkWare Delegation Program
+Vision and Mission
+About Us
+Careers
+StarkWare-Blog
+Media Kit
+Cairo for Developers
+Open Source License
+Licenses
+Terms of Use
+Privacy Policy
+
+© 2025 All Rights Reserved</pre>
+</body>
+</html>

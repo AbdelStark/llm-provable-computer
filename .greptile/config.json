@@ -1,0 +1,70 @@
+{
+  "strictness": 2,
+  "commentTypes": ["syntax", "logic", "info"],
+  "maxLines": 250,
+  "maxLineLength": 180,
+  "maxLinesToAnalyze": 20000,
+  "fileChangeLimit": 200,
+  "includeBranches": ["main", "codex/.*"],
+  "excludeAuthors": ["github-actions[bot]", "dependabot[bot]", "coderabbitai[bot]", "qodo-code-review"],
+  "disabledLabels": ["skip-review", "artifact-only", "docs-only", "wip"],
+  "ignorePatterns": [
+    "scripts/node_modules/**",
+    "docs/artifacts/**",
+    "docs/paper/artifacts/**",
+    "docs/paper/evidence/**",
+    "docs/paper/figures/**",
+    "compiled/**"
+  ],
+  "triggerOnUpdates": true,
+  "statusCheck": true,
+  "statusCommentsEnabled": true,
+  "updateExistingSummaryComment": true,
+  "updateSummaryOnly": false,
+  "showRepoMap": false,
+  "fixWithAI": true,
+  "hideFooter": true,
+  "summarySection": {
+    "included": true,
+    "collapsible": false,
+    "defaultOpen": true
+  },
+  "issuesTableSection": {
+    "included": true,
+    "collapsible": true,
+    "defaultOpen": true
+  },
+  "confidenceScoreSection": {
+    "included": true,
+    "collapsible": true,
+    "defaultOpen": false
+  },
+  "sequenceDiagramSection": {
+    "included": false,
+    "collapsible": true,
+    "defaultOpen": false
+  },
+  "instructions": "Focus on proof correctness, verification-boundary safety, version drift, and regressions in negative/tamper-path coverage. Ignore style-only issues and generated artifacts unless they create a reproducibility or integrity risk.",
+  "rules": [
+    {
+      "id": "proof-soundness",
+      "rule": "Flag any change that can let a proof, artifact manifest, or decoding-chain step verify under weaker conditions than before, including weaker commitment checks, missing nested-proof verification, or mismatched carried-state derivation.",
+      "severity": "high"
+    },
+    {
+      "id": "test-gaps",
+      "rule": "When proof semantics, carried-state structure, version constants, or manifest schemas change, require at least one updated negative, tamper, or compatibility test. Flag happy-path-only changes.",
+      "severity": "high"
+    },
+    {
+      "id": "doc-claim-drift",
+      "rule": "Flag documentation or README claims that no longer match the actual repository behavior, supported phases, backend boundaries, or reproducibility instructions.",
+      "severity": "medium"
+    },
+    {
+      "id": "ci-drift",
+      "rule": "Flag CI or script changes that reduce matrix coverage, weaken artifact determinism, or silently skip required proof and backend combinations.",
+      "severity": "medium"
+    }
+  ]
+}

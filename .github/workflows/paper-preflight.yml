@@ -1,0 +1,32 @@
+name: paper preflight
+
+on:
+  pull_request:
+    paths:
+      - "docs/paper/**"
+      - "scripts/paper/**"
+      - ".github/workflows/paper-preflight.yml"
+  push:
+    branches:
+      - main
+    paths:
+      - "docs/paper/**"
+      - "scripts/paper/**"
+      - ".github/workflows/paper-preflight.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  paper-preflight:
+    name: paper preflight
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Run paper preflight checks
+        run: |
+          python3 scripts/paper/paper_preflight.py --repo-root .

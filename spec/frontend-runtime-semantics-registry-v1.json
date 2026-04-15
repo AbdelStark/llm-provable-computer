@@ -1,0 +1,125 @@
+{
+  "registry_version": "frontend-runtime-semantics-registry-v1",
+  "semantic_scope": "research_v3_frontend_runtime_claim_boundary",
+  "purpose": "Machine-readable boundary for frontend, runtime, compiler, and equivalence-method lanes considered by the research-v3 artifact.",
+  "implemented_statuses": [
+    "implemented"
+  ],
+  "non_claim_statuses": [
+    "research_watch",
+    "not_implemented"
+  ],
+  "lanes": [
+    {
+      "lane_id": "transformer-vm",
+      "ecosystem": "provable-transformer-vm",
+      "role": "reference execution runtime",
+      "status": "implemented",
+      "artifact_binding": "Included in research-v3-equivalence engine summaries and rule witnesses.",
+      "claim_boundary": "Deterministic local execution is checked in lockstep for the selected .tvm program and max_steps."
+    },
+    {
+      "lane_id": "native-isa",
+      "ecosystem": "provable-transformer-vm",
+      "role": "native interpreter runtime",
+      "status": "implemented",
+      "artifact_binding": "Included in research-v3-equivalence engine summaries and rule witnesses.",
+      "claim_boundary": "Native interpreter execution is checked in lockstep for the selected .tvm program and max_steps."
+    },
+    {
+      "lane_id": "burn",
+      "ecosystem": "Burn",
+      "role": "tensor runtime cross-check",
+      "status": "implemented",
+      "artifact_binding": "Included in research-v3-equivalence engine summaries and rule witnesses when the burn-model feature is enabled.",
+      "claim_boundary": "Burn execution is checked in lockstep for the selected .tvm program and max_steps."
+    },
+    {
+      "lane_id": "onnx-tract",
+      "ecosystem": "ONNX/Tract",
+      "role": "exported graph runtime cross-check",
+      "status": "implemented",
+      "artifact_binding": "Included in research-v3-equivalence engine summaries and rule witnesses when the onnx-export feature is enabled.",
+      "claim_boundary": "The exported ONNX/Tract execution is checked in lockstep for the selected .tvm program and max_steps."
+    },
+    {
+      "lane_id": "torch-export",
+      "ecosystem": "PyTorch",
+      "role": "future canonical graph-capture candidate",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not ingest, hash, or execute torch.export ExportedProgram graphs."
+    },
+    {
+      "lane_id": "executorch",
+      "ecosystem": "PyTorch ExecuTorch",
+      "role": "future stateful decode-runtime reference",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not execute ExecuTorch programs or compare ExecuTorch stateful runtime traces."
+    },
+    {
+      "lane_id": "stablehlo",
+      "ecosystem": "OpenXLA StableHLO",
+      "role": "future compiler-portability IR candidate",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not export, import, hash, or execute StableHLO modules."
+    },
+    {
+      "lane_id": "iree",
+      "ecosystem": "IREE",
+      "role": "future compiler/runtime cross-check candidate",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not compile or execute IREE modules."
+    },
+    {
+      "lane_id": "onnx-mlir",
+      "ecosystem": "ONNX-MLIR",
+      "role": "future ONNX native-code lowering candidate",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not lower ONNX through ONNX-MLIR or compare native-code outputs."
+    },
+    {
+      "lane_id": "tvm-unity",
+      "ecosystem": "Apache TVM Unity",
+      "role": "future optimization/codegen experiment candidate",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not compile or execute TVM artifacts."
+    },
+    {
+      "lane_id": "vllm",
+      "ecosystem": "vLLM",
+      "role": "future decode scheduling and prefix-cache semantics reference",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not ingest vLLM graphs, KV-cache block traces, or prefix-cache schedules."
+    },
+    {
+      "lane_id": "sglang",
+      "ecosystem": "SGLang",
+      "role": "future decode scheduling and prefix-cache semantics reference",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence.",
+      "claim_boundary": "This artifact does not ingest SGLang runtime traces, prefix-cache schedules, or prefill/decode disaggregation traces."
+    },
+    {
+      "lane_id": "egg-emerge",
+      "ecosystem": "egg/Emerge-style equivalence",
+      "role": "future e-graph and rewrite-validation method candidate",
+      "status": "research_watch",
+      "artifact_binding": "No artifact binding in research-v3-equivalence beyond explicit non-claim limitations.",
+      "claim_boundary": "This artifact does not run equality saturation, infer rewrite rules, perform SMT validation, or run randomized opaque-kernel testing."
+    }
+  ],
+  "global_non_claims": [
+    "No torch.export ingestion or ExportedProgram hashing is implemented.",
+    "No ExecuTorch runtime execution is implemented.",
+    "No StableHLO, IREE, ONNX-MLIR, or TVM compiler-runtime lane is implemented.",
+    "No vLLM or SGLang decode-scheduler trace is implemented.",
+    "No egg/Emerge-style e-graph saturation, SMT rewrite validation, or randomized opaque-kernel testing is implemented."
+  ]
+}

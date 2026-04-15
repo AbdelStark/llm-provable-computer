@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Make ERC-20 Tokens Private on Starknet with STRK20</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; line-height: 1.45; color: #111; }
+    h1, h2 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f7f7f7; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+    .meta { margin-bottom: 1.5rem; }
+    .meta li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Make ERC-20 Tokens Private on Starknet with STRK20</h1>
+  <p>This is an inert, repo-local evidence wrapper. It stores browser-rendered visible text and content hashes so the snapshot can be inspected without executing third-party scripts or loading remote assets.</p>
+  <ul class="meta">
+    <li><strong>Label:</strong> <code>strk20</code></li>
+    <li><strong>Source URL:</strong> <code>https://www.starknet.io/blog/make-all-erc-20-tokens-private-with-strk20/</code></li>
+    <li><strong>Rendered HTML SHA-256:</strong> <code>bb325f63eb5d1d944d497862aeff4b49303632a7dc7a10c33d254682367a22a0</code></li>
+  </ul>
+  <h2>Rendered Visible Text</h2>
+  <pre>Want a cookie?
+
+Our website use cookies. By continuing, we assume your permission to deploy cookies as detailed in our Cookies Policy.
+
+Decline
+Accept
+Skip to content
+Developers
+Developers Hub
+SN Stack
+Build with AI
+Modular Ecosystem
+Tools &amp; Resources
+Documentation
+Cairo Book
+Tutorials
+Version Releases
+Ecosystem
+
+PROJECTS AND TOOLS
+
+Ecosystem Projects
+Crypto Wallets
+Bridges &amp; on-ramps
+DeFi dApps
+Block Explorers &amp; Monitoring tools
+
+GRANTS
+
+Grants Overview
+Seed Grants
+Growth Grants
+Community
+
+DECENTRALIZATION
+
+Governance
+Staking
+Roadmap
+
+GET INVOLVED
+
+Events
+Ambassadors Program
+Jobs
+Community Forum
+Online Communities
+Resources
+Blog
+Glossary
+FAQs
+Media Kit
+
+NETWORK
+
+Dune Dashboard
+Starknet Status Page
+Bridge
+Search
+Home  /  Blog
+Make all ERC-20 tokens private with STRK20
+Mar 10, 2026 ·
+4 min read
+ON THIS PAGE
+Private tokens on Starknet with no additional integration
+Why this has been so hard
+How STRK20 works
+Fully private DeFi features from day 1
+Risk management without compromise
+Build with us
+
+Every time you move tokens on a public blockchain, you leave a trail. Your wallet address, the amount, the counterparty, the time. All of it written permanently into a public ledger that anyone can read. That is not a bug. It is how blockchains were designed. But it is also one reason, for all the promise of decentralized finance, most of the world’s capital has stayed on the sidelines.
+
+Enterprises cannot expose their treasury activity to competitors. Institutions cannot reveal their trading strategy in real time. Individuals deserve financial privacy the same way they expect it from their bank. And developers have been trying to build around this limitation for years, reaching for workarounds that are expensive, fragile, or incompatible with the compliance requirements that real-world deployment demands.
+
+That limitation is ending.
+
+Private tokens on Starknet with no additional integration
+
+Imagine deploying an ERC-20 token where balances are private by default. Where a transfer between two parties reveals nothing to outside observers: not the sender, not the receiver, not the amount. Where users can swap on a DEX, interact with a lending protocol, or move funds across the ecosystem without leaving a public trace of their identity.
+
+That is what STRK20 makes possible. Any ERC-20 on Starknet can now be private. Not through a workaround or a wrapper, but natively, at the token level, built into the asset itself.
+
+At the center of it is the Starknet Privacy Pool. Users deposit into the pool, transact within it, and withdraw when they are ready. A single pool supports every ERC-20. And every transaction inside it is backed by a zero-knowledge proof, so validity is guaranteed without anything sensitive being revealed.
+
+This is not a product built for a narrow use case. It is composible infrastructure for a version of Starknet where privacy is the default, not the exception.
+
+Why this has been so hard
+
+The transparent-by-default model of public blockchains is not just an inconvenience. It is a structural barrier. For enterprises, it means every on-chain action is a disclosure. Supply chain payments, treasury management, payroll. Anything that touches the blockchain becomes public information. That is incompatible with how businesses operate.
+
+For institutions, the barrier is regulatory as much as technical. Privacy solutions that offer no risk management or compliance path are not solutions at all. For developers, every attempt to bolt privacy onto an existing token involves tradeoffs. Separate wrapped tokens. Fragmented liquidity. Expensive proof generation. Architecture that has to be rebuilt from scratch for each new application.
+
+The result is a DeFi ecosystem that, for all its innovation, cannot serve the full range of people and institutions that finance actually touches.
+
+STRK20 fixes this.
+
+How STRK20 works
+
+STRK20 is only possible because of longstanding innovations on Starknet and cryptographic breakthroughs that the team has built over years. In other words, other chains don’t have the capability to implement a similar solution without significant trade-offs.
+
+STRK20 is built on Starknet’s native ZK architecture. Every private transaction is backed by a zero-knowledge proof generated client-side and verified at the sequencer level. Execution is fast and cheap, because the proving infrastructure is the same one Starknet already uses to prove its own blocks.
+
+All logic is written in Cairo, giving the system a single unified codebase for both the client-side proof and the on-chain contract. There is no separate circuit language, no parallel proving infrastructure to maintain. Existing Starknet accounts, including multisig, hardware wallets, and smart accounts, work out of the box.
+
+Fully private DeFi features from day 1
+
+Privacy on its own is not enough. For it to matter, it has to work where finance actually happens: in swaps, in staking, in the protocols that make DeFi run. STRK20 will launch with two of those use cases live from day one.
+
+Anonymous swaps on Ekubo. When you swap tokens on Ekubo, the amounts you trade affect the protocol’s public state and will always be visible. But your identity does not have to be. With STRK20, users swap directly from the privacy pool without a temporary public account. No address linked to the trade. No public on-chain trail back to who made it (but a trail for regulators or auditors when required).
+
+Anonymous staking. Staking is one of the most common on-chain activities, and one of the most revealing. Wallet addresses tied to staking positions are easy to track over time. With STRK20, anonymous staking follows directly from anonymous swapping. Users swap into liquid staking tokens directly from the privacy pool on Ekubo, acquiring a staking position without their identity ever entering the public record. The swap and the stake happen in one flow, and neither is tied to who you are.
+
+Risk management without compromise
+
+The assumption that privacy and compliance are in conflict is one worth challenging directly.
+
+When a user joins the Starknet Privacy Pool, they register an encrypted viewing key on-chain. If a regulatory request comes in, a designated third party auditing entity can decrypt that specific user’s key and trace their complete transaction history, forwards and backwards. Nobody else is touched. Every other user’s privacy remains intact.
+
+This is not a backdoor. It is a carefully scoped access mechanism that responds to legal requirements without exposing the entire pool. Users get privacy by default. Auditors get access when the law requires it. The architecture holds both without compromising either.
+
+That is what makes STRK20 viable for institutions and enterprises, not just individuals. Privacy that comes with a compliance path is privacy that can actually be deployed at scale.
+
+Build with us
+
+If you are a token team, developer, or institution ready to bring privacy to your ERC-20 on Starknet, we want to work with you.
+
+Reach out here.
+
+Join our newsletter
+
+Receive notifications on Starknet updates
+
+May also interest you
+Starknet: The Home for Perps Trading
+
+Perpetual trading is where “DeFi UX” and “DeFi infrastructure” collide head‑on. Traders want tight spreads, deep liquidity, and instant execution.
+
+March 13, 2026
+
+Technical Infrastructure Roadmap
+
+The Starknet Infrastructure roadmap: unlocking execution, decentralisation, and economics to build a faster, cheaper, and resilient blockchain
+
+March 5, 2026
+
+Why Starknet Has the Potential to Become Crypto’s Ultimate Privacy Chain
+
+Can Starknet solve crypto’s privacy problem? Explore how ZK-native architecture, native account abstraction, and client-side proving create the ultimate privacy engine.
+
+March 2, 2026
+
+strkBTC: Starknet’s Shielded Bitcoin with Private Transactions
+
+Discover strkBTC, the first wrapped asset on Starknet, redeemable for native BTC, with optional shielding. Enable private BTC transactions and secure DeFi settlement without…
+
+February 26, 2026
+
+Developers
+Developers Hub
+SN Stack
+Build with AI
+Modular Ecosystem
+Documentation
+Cairo Book
+Tutorials
+Version Releases
+Ecosystem
+Crypto Bridge
+Ecosystem Projects
+Crypto Wallets
+Bridges &amp; on-ramps
+DeFi dApps
+Starknet Grants
+Starknet Status Page
+Community
+Events
+Ambassadors Program
+Jobs
+Governance
+Roadmap
+Staking
+Community Forum
+Online communities
+Resources
+Blog
+Glossary
+FAQs
+Media Kit
+Account Abstraction
+Privacy Policy
+Terms &amp; Conditions
+Terms Of Use</pre>
+</body>
+</html>

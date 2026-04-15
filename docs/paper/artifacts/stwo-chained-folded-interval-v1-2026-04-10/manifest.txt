@@ -1,0 +1,11 @@
+generated_at_utc: 2026-04-10T14:28:02Z
+repo_root: .
+git_commit: c9498aa149181a208c682be5d2f81975d6863a1d
+git_commit_short: c9498aa
+git_branch: codex/phase27-chained-folded-accumulator-v1
+rustc: rustc 1.90.0-nightly (e9182f195 2025-07-13)
+cargo: cargo 1.90.0-nightly (eabb4cd92 2025-07-09)
+host_platform: Darwin 23.6.0 arm64
+nightly_toolchain: +nightly-2025-07-14
+bundle_dir: docs/paper/artifacts/stwo-chained-folded-interval-v1-2026-04-10
+fixtures: decoding_state_relation_accumulator_phase24, intervalized_decoding_state_relation_phase25, folded_intervalized_decoding_state_relation_phase26, chained_folded_intervalized_decoding_state_relation_phase27

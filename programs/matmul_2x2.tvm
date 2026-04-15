@@ -1,0 +1,61 @@
+; 2x2 matrix multiplication with deterministic constants.
+; A = [[1,2],[3,4]], B = [[5,6],[7,8]]
+; C = A * B = [[19,22],[43,50]]
+; Store C in MEM[8..11], then load sum(C)=134 into ACC.
+.memory 14
+.init 0 1
+.init 1 2
+.init 2 3
+.init 3 4
+.init 4 5
+.init 5 6
+.init 6 7
+.init 7 8
+.init 8 0
+.init 9 0
+.init 10 0
+.init 11 0
+.init 12 0
+
+; c00 = a00*b00 + a01*b10
+LOAD 0
+MULM 4
+STORE 12
+LOAD 1
+MULM 6
+ADDM 12
+STORE 8
+
+; c01 = a00*b01 + a01*b11
+LOAD 0
+MULM 5
+STORE 12
+LOAD 1
+MULM 7
+ADDM 12
+STORE 9
+
+; c10 = a10*b00 + a11*b10
+LOAD 2
+MULM 4
+STORE 12
+LOAD 3
+MULM 6
+ADDM 12
+STORE 10
+
+; c11 = a10*b01 + a11*b11
+LOAD 2
+MULM 5
+STORE 12
+LOAD 3
+MULM 7
+ADDM 12
+STORE 11
+
+; checksum = c00 + c01 + c10 + c11
+LOAD 8
+ADDM 9
+ADDM 10
+ADDM 11
+HALT

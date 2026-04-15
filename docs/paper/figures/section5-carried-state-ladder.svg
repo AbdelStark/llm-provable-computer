@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="700" height="235" viewBox="0 0 700 235" role="img" aria-labelledby="title desc">
+  <title id="title">Carried-state packaging ladder</title>
+  <desc id="desc">Statement-preserving carried-state packaging ladder from decode steps through a verified chain, segments, interval bundles, rollups, a layout matrix, and a pre-recursive aggregation boundary. KV and lookup commitments are carried as continuity lanes.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#4d4d4d"/>
+    </marker>
+    <style>
+      .bg { fill: #ffffff; }
+      .title { fill: #222222; font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 12px; font-weight: 700; }
+      .note { fill: #595959; font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 9px; }
+      .box { fill: #ffffff; stroke: #4d4d4d; stroke-width: 0.9; }
+      .box-shaded { fill: #f3f3f3; stroke: #4d4d4d; stroke-width: 0.9; }
+      .arrow { stroke: #4d4d4d; stroke-width: 1.0; marker-end: url(#arrow); fill: none; }
+      .lane { stroke-width: 2.0; stroke-linecap: round; fill: none; }
+      .kv { stroke: #006BA4; }
+      .lookup { stroke: #FF800E; }
+      .label { fill: #222222; font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 10px; text-anchor: middle; dominant-baseline: middle; }
+      .small { fill: #595959; font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 9px; text-anchor: middle; dominant-baseline: middle; }
+      .lane-label { font-family: 'DejaVu Sans', Arial, sans-serif; font-size: 9px; font-weight: 700; text-anchor: end; dominant-baseline: middle; }
+      .kv-label { fill: #006BA4; }
+      .lookup-label { fill: #FF800E; }
+    </style>
+  </defs>
+
+  <rect class="bg" x="0" y="0" width="700" height="235"/>
+
+  <text class="title" x="44" y="30">Carried-state packaging ladder</text>
+  <text class="note" x="44" y="48">Statement-preserving artifact layers, not recursive compression.</text>
+
+  <rect class="box" x="44" y="75" width="92" height="44" rx="4"/>
+  <text class="label" x="90" y="91">decode</text>
+  <text class="label" x="90" y="106">steps</text>
+
+  <rect class="box" x="158" y="75" width="92" height="44" rx="4"/>
+  <text class="label" x="204" y="91">verified</text>
+  <text class="label" x="204" y="106">chain</text>
+
+  <rect class="box-shaded" x="272" y="75" width="118" height="44" rx="4"/>
+  <text class="label" x="331" y="91">segments +</text>
+  <text class="label" x="331" y="106">interval bundles</text>
+
+  <rect class="box-shaded" x="412" y="75" width="106" height="44" rx="4"/>
+  <text class="label" x="465" y="91">rollups +</text>
+  <text class="label" x="465" y="106">layout matrix</text>
+
+  <rect class="box" x="540" y="75" width="116" height="44" rx="4"/>
+  <text class="label" x="598" y="91">aggregation</text>
+  <text class="label" x="598" y="106">boundary</text>
+
+  <path class="arrow" d="M 136 97 H 156"/>
+  <path class="arrow" d="M 250 97 H 270"/>
+  <path class="arrow" d="M 390 97 H 410"/>
+  <path class="arrow" d="M 518 97 H 538"/>
+
+  <text class="lane-label kv-label" x="132" y="154">KV lane</text>
+  <path class="lane kv" d="M 158 154 H 656"/>
+  <circle cx="158" cy="154" r="3.2" fill="#006BA4"/>
+  <circle cx="331" cy="154" r="3.2" fill="#006BA4"/>
+  <circle cx="465" cy="154" r="3.2" fill="#006BA4"/>
+  <circle cx="598" cy="154" r="3.2" fill="#006BA4"/>
+  <text class="small" x="407" y="140">cumulative + frontier continuity</text>
+
+  <text class="lane-label lookup-label" x="132" y="190">lookup lane</text>
+  <path class="lane lookup" d="M 158 190 H 656"/>
+  <circle cx="158" cy="190" r="3.2" fill="#FF800E"/>
+  <circle cx="331" cy="190" r="3.2" fill="#FF800E"/>
+  <circle cx="465" cy="190" r="3.2" fill="#FF800E"/>
+  <circle cx="598" cy="190" r="3.2" fill="#FF800E"/>
+  <text class="small" x="407" y="176">cumulative + frontier continuity</text>
+</svg>

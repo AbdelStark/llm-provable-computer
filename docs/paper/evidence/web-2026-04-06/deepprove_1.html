@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lagrange: DeepProve-1: The First zkML System to Prove a Full LLM Inference</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; line-height: 1.45; color: #111; }
+    h1, h2 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f7f7f7; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+    .meta { margin-bottom: 1.5rem; }
+    .meta li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Lagrange: DeepProve-1: The First zkML System to Prove a Full LLM Inference</h1>
+  <p>This is an inert, repo-local evidence wrapper. It stores browser-rendered visible text and content hashes so the snapshot can be inspected without executing third-party scripts or loading remote assets.</p>
+  <ul class="meta">
+    <li><strong>Label:</strong> <code>deepprove_1</code></li>
+    <li><strong>Source URL:</strong> <code>https://www.lagrange.dev/blog/deepprove-1</code></li>
+    <li><strong>Rendered HTML SHA-256:</strong> <code>6f2673a8c4632a2bd534139dd5bc36b65761f5debc672447959432f7dca729cc</code></li>
+  </ul>
+  <h2>Rendered Visible Text</h2>
+  <pre>TECHNOLOGY
+ECOSYSTEM
+FOUNDATION
+DOCS
+ARTICLES
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+DeepProve-1: The First zkML System to Prove a Full LLM Inference
+August 18, 2025
+
+Lagrange Labs is proud to announce DeepProve-1, the first production-ready zkML system to successfully generate a cryptographic proof of a full large language model (LLM) inference. This release demonstrates that verifiable AI is no longer a distant aspiration—it is now a reality.
+
+With DeepProve-1, we’ve successfully generated a zero-knowledge proof for the full inference of OpenAI’s GPT-2—a major breakthrough in the field of verifiable AI. This accomplishment isn’t just a technical feat; it establishes a concrete foundation for zkML support across the next generation of large language models, including LLAMA, Gemma, and others. Architecturally, GPT-2 and Meta’s LLAMA share striking similarities, which means that DeepProve is now closer than ever to be able to prove a LLAMA-based LLM. Lagrange plans to bridge this final gap in the coming months, enabling DeepProve to support the most widely adopted open-source LLMs in the world.
+
+DeepProve-1 marks an inflection point in the progression of machine learning, introducing verifiability as a core feature of modern AI systems. Verifiability, once limited to basic model types such as MLPs and CNNs, now extends to full-fledged transformer architectures. As AI increasingly powers decision-making in defense, healthcare, finance, and infrastructure, DeepProve-1 brings cryptographic integrity to the systems that matter most.
+
+What It Took to Prove GPT-2
+
+Proving GPT-2 inferences involved extensive work at the intersection of cryptography, systems engineering, and machine learning. Since our last major milestone, where we supported fully provable inferences for MLPs and CNNs, Lagrange’s research and engineering teams have focused on enabling support for the structure and computation patterns that define transformer-based LLMs.
+
+This work required us to significantly expand the capabilities of the DeepProve framework, including:
+
+1. Support for Arbitrary Graph Structures
+
+Most production-ready models, particularly LLMs, are not linear by design. As opposed to utilizing sequences of layers, LLMs utilize computation graphs, often with residual connections, parallel branches, and variable-length inputs. To expand DeepProve’s proving capabilities to LLMs, we added support for complex graphs that describe the architecture of real-world models. This graph support is crucial for accommodating residuals in transformer blocks, where outputs are added to original inputs. DeepProve’s underlying infrastructure now supports any computational path through a model graph—including multi-input layers and branching outputs—enabling us to ingest and prove ONNX and GGUF files with non-linear structures.
+
+2. Introduction of Generic and Transformer-Specific Layers
+
+Several new layers were added to DeepProve to enable GPT-2 proving:
+
+Add Layer: While addition appears trivial, quantization complicates the operation. Naively, each input would require a separate lookup table. Instead, we designed a quantization strategy that applies post-operation, maintaining shared lookup tables and improving performance.
+ConcatMatMul: This layer enables matrix multiplication across concatenated tensors—crucial for modeling multi-head attention. It supports higher-dimensional operations required in transformers.
+Softmax: One of the most technically demanding layers to prove due to its sensitivity to floating-point precision. We adapted techniques from the zkLLM paper but refined the implementation to ensure cryptographic soundness, particularly around precision bounds.
+Embeddings and Positionals: These input-preparation layers were implemented using efficient lookup table representations to support rapid, verifiable embedding generation.
+LayerNorm and GELU: Core layers in transformer architectures, now efficiently proven through table-based representations.
+QKV (Query-Key-Value): These layers involve repeated matrix multiplications with reuse of intermediate values. We optimized their provability using caching and specialized sumcheck techniques.
+3. GGUF Support: Expanding Model Compatibility
+
+We added support for the GGUF format—one of the most widely adopted formats for exporting and running large language models. GGUF is optimized for LLMs and is commonly used by developers and researchers alike, with a growing ecosystem of compatible models available on platforms like Hugging Face. By enabling GGUF ingestion, DeepProve can now convert GGUF-exported models into our internal framework for proving inference, provided the model architecture falls within our supported layer set. This dramatically improves accessibility and interoperability, allowing users to prove inference for real-world, community-adopted models without requiring custom export pipelines.
+
+4. A Dedicated LLM Inference Engine
+
+Unlike traditional neural networks, LLMs are autoregressive, meaning inference is computed token-by-token. This requires an inference driver that manages state across steps, generates proofs incrementally, and verifies output correctness. DeepProve-1 introduces a dedicated module to handle LLM inference in a way that preserves our generic Model API, enabling both simplicity and scalability.
+
+Engineering Improvements for Performance and Scale
+
+Now that DeepProve-1 proves the inference of a real LLM, our next priority is performance optimization. Verifying a transformer model like GPT-2 was a breakthrough—but for zkML to be practical in production environments, especially those with high-throughput or real-time requirements, performance must match accuracy. In order to prove LLM inferences at scale, we are optimizing DeepProve along two major dimensions: cryptographic efficiency and system-level parallelism.
+
+Cryptographic Improvements
+Optimized Polynomial Commitment Schemes: We currently use a basefold commitment that, while functional, produces large proof sizes and slow verification. We are exploring commitment schemes that minimize both overhead and latency while maintaining soundness.
+Reusable Lookup Tables: Quantization introduced the need for many unique lookup tables. We are developing a strategy for static, reusable tables that preserve correctness without ballooning proof complexity.
+Parallel and Distributed Proving
+Graph-Aware Parallelism: DeepProve’s new support for graph-based models unlocks parallel computation. Many subtasks in the proof generation graph are independent and can be computed in parallel. Refactoring the prover into a concurrent engine will yield significant gains.
+Distributed Proving Architecture: Our long-term vision includes distributing proving tasks across multiple machines. By representing model inference as a directed acyclic graph (DAG) of cryptographic subroutines, we can allocate them across a network of provers, enabling efficient proof generation at industrial scale.
+Why DeepProve-1 &amp; Proving GPT-2 Matters
+
+DeepProve-1 is not just a technical milestone, but a proof of possibility. For the first time ever, it is now feasible to prove an LLM&#x27;s inference in zero-knowledge—preserving privacy, ensuring auditability, and maintaining performance guarantees.
+
+This opens the door to deploying provable AI across:
+
+Defense: Prove that mission-critical models follow strict operational constraints without revealing model internals.
+Healthcare: Audit clinical decisions made by LLMs without exposing patient data or proprietary models.
+Finance: Ensure model-driven decisions comply with fairness mandates and risk policies.
+
+More importantly, the same components used to prove GPT-2—multi-head attention, layer normalization, softmax, and quantization—are also present in larger models like LLAMA, Falcon, and Mistral. Our roadmap includes closing the gap between DeepProve-1 and these larger models, but the hardest parts are now behind us.
+
+TL;DR &amp; The Road Ahead (Proving LLAMA)
+
+With DeepProve-1, we’ve reached a new milestone in the evolution of machine learning: proving the inference of a full transformer-based language model. Over the coming months, we will optimize DeepProve’s performance for LLMs across the board: reducing memory consumption, minimizing latency, and accelerating proof generation to meet the demands of real-world deployments.
+
+Next up is LLAMA, Meta’s family of open-source large language models and one of the most widely adopted architectures in enterprise and research. Architecturally, LLAMA and GPT-2 share similar core components—meaning we are already within reach. Proving LLAMA will represent a major leap forward for safe AI, enabling cryptographic verifiability for a modern LLM that currently powers some of the internet’s most-used applications, chatbots, and autonomous agents.
+
+As AI models continue to inform decisions across healthcare, defense, and financial systems, proving that those decisions are correct is no longer a theoretical benefit—it is a necessity for humankind. DeepProve stands at the frontier of guaranteeing that necessity by design: a production-ready zkML framework engineered to make verifiability native to machine learning. With the successful proof of GPT-2 and rapid progress toward LLAMA, Lagrange is pioneering a future where every AI model’s behavior can be audited, every inference proven, and every deployment held to a common standard.
+
+The age of safe, verifiable AI is here, and DeepProve is lighting the path forward.
+
+ENGINEERING UPDATES
+Top Posts
+
+Making Hard Math Provable: Introducing Efficient Proofs for Non-Polynomial Functions
+
+Lagrange&#x27;s Year in Review: 2025
+
+Lagrange Labs Listed in the Vulcan-SOF Technology Portal, Expanding Access to Verifiable AI for Special Operations
+
+Lagrange Labs Joins General Dynamics’ Supplier Ecosystem to Advance AI Assurance Across Defense Applications
+
+Lagrange Labs Added to Raytheon’s Supplier Network for Cryptographic Verification of Defense Systems
+
+Sign up for updates
+RESOURCES
+Github
+DeepProve
+Defense
+Docs
+ZK Prover Network
+Ecosystem
+Blog
+ZK Coprocessor
+Engineering
+ABOUT
+Careers
+Press Kit
+Foundation
+Terms &amp; Conditions
+Privacy Policy
+FOLLOW
+CONTACT
+Building with Lagrange?
+Questions about our products
+Support@lagrange.dev
+© Lagrange 2025
+English</pre>
+</body>
+</html>

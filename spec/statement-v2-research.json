@@ -1,0 +1,8 @@
+{
+  "statement_version": "statement-v2-research-draft",
+  "semantic_scope": "one_step_transformer_onnx_equivalence_under_fixed_profile",
+  "fixed_point_profile_ref": "spec/fixed-point-semantics-v2.json",
+  "onnx_op_subset_ref": "spec/onnx-op-subset-v2.json",
+  "artifact_schema_ref": "spec/statement-v2-one-step-certificate.schema.json",
+  "notes": "This is a research-stage statement. It is not a full cryptographic proof of transformer semantics."
+}

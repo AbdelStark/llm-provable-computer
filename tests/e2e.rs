@@ -81,6 +81,36 @@ fn e2e_multiply_program() {
 }
 
 #[test]
+fn e2e_dot_product_program() {
+    let source = std::fs::read_to_string("programs/dot_product.tvm").expect("fixture");
+    let state = run_and_verify(&source, 128, 2);
+    assert!(state.halted);
+    assert_eq!(state.acc, 70, "dot([1,2,3,4],[5,6,7,8]) = 70");
+    assert_eq!(state.memory[9], 70, "result persisted in memory");
+}
+
+#[test]
+fn e2e_matmul_2x2_program() {
+    let source = std::fs::read_to_string("programs/matmul_2x2.tvm").expect("fixture");
+    let state = run_and_verify(&source, 256, 2);
+    assert!(state.halted);
+    assert_eq!(state.acc, 134, "sum(C) = 134 for deterministic 2x2 matmul");
+    assert_eq!(state.memory[8], 19);
+    assert_eq!(state.memory[9], 22);
+    assert_eq!(state.memory[10], 43);
+    assert_eq!(state.memory[11], 50);
+}
+
+#[test]
+fn e2e_single_neuron_program() {
+    let source = std::fs::read_to_string("programs/single_neuron.tvm").expect("fixture");
+    let state = run_and_verify(&source, 128, 2);
+    assert!(state.halted);
+    assert_eq!(state.acc, 1, "neuron activation should fire");
+    assert_eq!(state.memory[7], 20, "pre-activation weighted sum");
+}
+
+#[test]
 fn e2e_subroutine_addition() {
     let source = std::fs::read_to_string("programs/subroutine_addition.tvm").expect("fixture");
     let state = run_and_verify(&source, 32, 1);

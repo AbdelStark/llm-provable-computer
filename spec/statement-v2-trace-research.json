@@ -1,0 +1,8 @@
+{
+  "statement_version": "statement-v2-research-draft",
+  "semantic_scope": "prefix_trace_transformer_onnx_equivalence_under_fixed_profile",
+  "fixed_point_profile_ref": "spec/fixed-point-semantics-v2.json",
+  "onnx_op_subset_ref": "spec/onnx-op-subset-v2.json",
+  "artifact_schema_ref": "spec/statement-v2-trace-certificate.schema.json",
+  "notes": "Research-stage prefix trace equivalence statement. Not a full cryptographic proof of transformer semantics."
+}

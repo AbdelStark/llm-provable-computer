@@ -1,0 +1,98 @@
+[
+  {
+    "label": "gemma_3_model_card",
+    "url": "https://ai.google.dev/gemma/docs/core/model_card_3",
+    "title": "Gemma 3 model card \u00a0|\u00a0 Google AI for Developers",
+    "file": "gemma_3_model_card.html",
+    "rendered_sha256": "d4edba17f9e26f30c6c9ef678b4d797056acb4f5b04f7de28e92f36946f42e78",
+    "snapshot_sha256": "900997cd058e84fc4b43083a199d02fadd4213f6d6864eb7cebab3ef1a405001"
+  },
+  {
+    "label": "gemma_family_overview",
+    "url": "https://developers.googleblog.com/en/gemma-explained-overview-gemma-model-family-architectures/",
+    "title": "Gemma explained: An overview of Gemma model family architectures - Google Developers Blog",
+    "file": "gemma_family_overview.html",
+    "rendered_sha256": "171c617eafdbcbfdd8f5f3ccf08df98fa327a305a0120e82455e6455e4e90aca",
+    "snapshot_sha256": "cfbd4a86f60d89fc98b3d3bb018d53de21b2fdfe9181f5ec4423d35cede896a9"
+  },
+  {
+    "label": "stwo_2_0_0",
+    "url": "https://starkware.co/blog/s-two-2-0-0-prover-for-developers/",
+    "title": "S-Two 2.0.0 is a Developer-Friendly, Fully Open-Source Toolkit",
+    "file": "stwo_2_0_0.html",
+    "rendered_sha256": "c70b4f2dc93ae019d2f37f82a2138f2eab4bc6de06b2af0dd5974c2357e2fe79",
+    "snapshot_sha256": "5e92c6e216d2571f1d32c4c0c1cda507f40b81634c9eaf60255121a30a0c9b44"
+  },
+  {
+    "label": "recursive_circuit_proving",
+    "url": "https://starkware.co/blog/minutes-to-seconds-efficiency-gains-with-recursive-circuit-proving/",
+    "title": "StarkWare's S-two: Unlocking Efficiency with Recursive Circuit Proving",
+    "file": "recursive_circuit_proving.html",
+    "rendered_sha256": "83f3a60c020140d8ead9144da293d1d184f3b0820aaeae323898e4786fe10fbb",
+    "snapshot_sha256": "2b16ed0f8ec6a59e8eb4ea01583da3b5bde94be5cb3eb3489b2d99e63b1a8431"
+  },
+  {
+    "label": "starknet_version_releases",
+    "url": "https://www.starknet.io/developers/version-releases/",
+    "title": "Version Releases | Starknet",
+    "file": "starknet_version_releases.html",
+    "rendered_sha256": "60f005f614e24ced870ff7e4e312105f5aaefff8d684bbb860cbf0be284e1791",
+    "snapshot_sha256": "6e2315d02f5dce9db16ba63153a5d6c52b82d01ae4d8575d1ff0223d9ded8ec7"
+  },
+  {
+    "label": "strk20",
+    "url": "https://www.starknet.io/blog/make-all-erc-20-tokens-private-with-strk20/",
+    "title": "Make ERC-20 Tokens Private on Starknet with STRK20",
+    "file": "strk20.html",
+    "rendered_sha256": "bb325f63eb5d1d944d497862aeff4b49303632a7dc7a10c33d254682367a22a0",
+    "snapshot_sha256": "c2957c55d88138a5e8fadbc2abe9aaf7b6d8e2479167dfb9cf2b66904de62f5f"
+  },
+  {
+    "label": "deepprove_1",
+    "url": "https://www.lagrange.dev/blog/deepprove-1",
+    "title": "Lagrange: DeepProve-1: The First zkML System to Prove a Full LLM Inference",
+    "file": "deepprove_1.html",
+    "rendered_sha256": "6f2673a8c4632a2bd534139dd5bc36b65761f5debc672447959432f7dca729cc",
+    "snapshot_sha256": "c66aed0678de2ff523d779f0cd52864a02a3896c5f14081520ecb69554256bfe"
+  },
+  {
+    "label": "deepprove_update_sep_2025",
+    "url": "https://www.lagrange.dev/engineering-updates/september-2025",
+    "title": "Lagrange Engineering Update: September 2025",
+    "file": "deepprove_update_sep_2025.html",
+    "rendered_sha256": "66116718561860052de45709e3d292e04d8e7eb637fb180918169cb20efdfdc5",
+    "snapshot_sha256": "9d729c1b57001e4c4e78ae0911b841c02b9858d98470dc5c0904aac752c9339f"
+  },
+  {
+    "label": "luminair_post",
+    "url": "https://starkware.co/blog/giza-x-s-two-powering-verifiable-ml-with-luminair/",
+    "title": "Giza x S-two: Verifiable Machine Learning with LuminAIR and S-two prover",
+    "file": "luminair_post.html",
+    "rendered_sha256": "0674f25f7d1da1e41e5d5e2d1a9233ced47de41e01f776f2943bf546b3806193",
+    "snapshot_sha256": "c1ea73df47b6b0272628f8f6314bff1ffa5ab82a4e4b55b18a8da553c5774c7f"
+  },
+  {
+    "label": "zkpytorch_product",
+    "url": "https://polyhedra.network/zkPyTorch",
+    "title": "zkPyTorch \uff5cPolyhedra",
+    "file": "zkpytorch_product.html",
+    "rendered_sha256": "a3c7bb5d4bf9455397a18b20f63f649abfcd9527a4653ee024e4e24b49425866",
+    "snapshot_sha256": "5f3854dc9d0260daa4cb0a896bd906a1b9385971d02170c8ea61d1ed969571de"
+  },
+  {
+    "label": "zkpytorch_blog",
+    "url": "https://blog.polyhedra.network/zkpytorch/",
+    "title": "zkPyTorch: Verifiable PyTorch with Zero-Knowledge Proofs",
+    "file": "zkpytorch_blog.html",
+    "rendered_sha256": "fbf5a03ce39634bc70d1ac5736be7fd728a8486ec143181f2bc59c46826a259e",
+    "snapshot_sha256": "5ab5c1ff63f494377944dafdd4579a2c2446ecce97059dd0611dd4ff7ddfe26e"
+  },
+  {
+    "label": "paradex_stwo",
+    "url": "https://starkware.co/blog/paradex-s-two-the-fastest-prover-meets-the-fastest-appchain/",
+    "title": "Paradex Integrates S-two for High-Speed, Low-Cost Proving",
+    "file": "paradex_stwo.html",
+    "rendered_sha256": "2cf20650eb1296fd79a4fb3dbee9f4066e394118a16ef4ee6155b767d6c8b3b6",
+    "snapshot_sha256": "acbd79523ddb02b60c23937def91aa7cda0cd4c0022687eaefe4503ebdc04d05"
+  }
+]

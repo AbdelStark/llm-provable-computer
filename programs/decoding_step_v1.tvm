@@ -1,0 +1,72 @@
+; Fixed-shape proof-carrying decoding step template.
+; Memory layout:
+;   0..5   rolling KV-cache slice (three key/value pairs)
+;   6..7   incoming key/value for the current token
+;   8..9   fixed query fragment for this step
+;   10..12 step-local score/output/token cells
+;   13..20 shared lookup witness rows
+;   21     decoding position
+;   22     constant one for position increment
+.memory 23
+.init 22 1
+
+; score the most recent cached pair against the current query
+LOAD 8
+MULM 4
+STORE 10
+LOAD 9
+MULM 5
+ADDM 10
+STORE 10
+
+; blend in the current token's key/value contribution
+LOAD 6
+ADDM 10
+STORE 11
+LOAD 7
+ADDM 11
+STORE 11
+
+; emit a bounded token marker
+LOADI 1
+STORE 12
+
+; shared normalization lookup rows
+LOADI 16
+STORE 13
+LOADI 64
+STORE 14
+LOADI 1
+STORE 15
+LOADI 1
+STORE 16
+LOADI 4
+STORE 17
+LOADI 128
+STORE 18
+LOADI 0
+STORE 19
+LOADI 1
+STORE 20
+
+; shift the rolling KV cache and append the current pair
+LOAD 2
+STORE 0
+LOAD 3
+STORE 1
+LOAD 4
+STORE 2
+LOAD 5
+STORE 3
+LOAD 6
+STORE 4
+LOAD 7
+STORE 5
+
+; increment the decoding position
+LOAD 21
+ADDM 22
+STORE 21
+
+LOAD 12
+HALT

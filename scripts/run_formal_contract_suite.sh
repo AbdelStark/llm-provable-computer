@@ -1,0 +1,90 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+cd "$ROOT_DIR"
+
+KANI_ARGS=(
+  cargo
+  kani
+  --features
+  stwo-backend
+  --output-format
+  terse
+  --harness
+  kani_phase12_claim_bindings_accept_canonical_single_step
+  --harness
+  kani_phase12_claim_bindings_reject_any_binding_mismatch
+  --harness
+  kani_phase12_state_progress_accepts_canonical_single_step
+  --harness
+  kani_phase12_state_progress_rejects_any_progress_mismatch
+  --harness
+  kani_phase14_claim_bindings_accept_canonical_single_step
+  --harness
+  kani_phase14_claim_bindings_reject_any_binding_mismatch
+  --harness
+  kani_phase14_state_progress_accepts_canonical_single_step
+  --harness
+  kani_phase14_state_progress_rejects_any_progress_mismatch
+  --harness
+  kani_phase24_relation_sequence_accepts_contiguous_members
+  --harness
+  kani_phase24_relation_sequence_rejects_zero_width_member
+  --harness
+  kani_phase24_relation_sequence_rejects_non_contiguous_steps
+  --harness
+  kani_phase24_relation_sequence_rejects_boundary_mismatch
+  --harness
+  kani_phase25_interval_counts_accept_checked_differences
+  --harness
+  kani_phase25_interval_counts_cover_positive_nonzero_lookup_delta_case
+  --harness
+  kani_phase25_interval_counts_reject_underflow
+  --harness
+  kani_phase25_interval_counts_reject_zero_width_interval
+  --harness
+  kani_phase25_interval_reconstruction_rejects_boundary_mismatch
+  --harness
+  kani_phase25_interval_reconstruction_covers_contiguous_pair
+  --harness
+  kani_phase26_fold_shape_accepts_contiguous_pair
+  --harness
+  kani_phase26_fold_shape_covers_nonzero_lookup_delta_fold
+  --harness
+  kani_phase26_fold_shape_rejects_boundary_mismatch
+  --harness
+  kani_phase26_fold_shape_rejects_insufficient_bounded_arity
+  --harness
+  kani_phase27_chain_shape_accepts_contiguous_pair
+  --harness
+  kani_phase27_chain_shape_covers_nonzero_lookup_delta_chain
+  --harness
+  kani_phase27_chain_shape_rejects_boundary_mismatch
+  --harness
+  kani_phase27_chain_shape_rejects_insufficient_bounded_arity
+  --harness
+  kani_phase28_aggregation_shape_accepts_contiguous_pair
+  --harness
+  kani_phase28_aggregation_shape_covers_nonzero_lookup_delta_aggregate
+  --harness
+  kani_phase28_aggregation_shape_rejects_boundary_mismatch
+  --harness
+  kani_phase28_aggregation_shape_rejects_insufficient_bounded_arity
+  --harness
+  kani_phase30_manifest_accepts_valid_single_step_surface
+  --harness
+  kani_phase30_manifest_accepts_contiguous_pair
+  --harness
+  kani_phase30_manifest_shape_rejects_chain_boundary_mismatch
+  --harness
+  kani_phase30_manifest_shape_rejects_step_index_drift
+  --harness
+  kani_phase30_manifest_counts_accept_valid_bounded_counts
+  --harness
+  kani_phase30_manifest_counts_reject_zero_envelopes
+  --harness
+  kani_phase30_manifest_counts_reject_mismatched_totals
+)
+
+"${KANI_ARGS[@]}"

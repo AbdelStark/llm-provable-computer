@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-provable-computer/spec/stwo-phase12-shared-lookup-artifact.schema.json",
+  "title": "S-two Phase 12 Shared Lookup Artifact",
+  "type": "object",
+  "required": [
+    "artifact_version",
+    "semantic_scope",
+    "artifact_commitment",
+    "layout_commitment",
+    "static_table_registry_version",
+    "static_table_registry_scope",
+    "static_table_registry_commitment",
+    "static_table_commitments",
+    "lookup_rows_commitment",
+    "flattened_lookup_rows",
+    "normalization_proof_envelope",
+    "activation_proof_envelope"
+  ],
+  "properties": {
+    "artifact_version": { "const": "stwo-phase12-shared-lookup-artifact-v1" },
+    "semantic_scope": { "const": "stwo_parameterized_decoding_shared_lookup_artifact" },
+    "artifact_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "layout_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "static_table_registry_version": {
+      "const": "stwo-phase12-shared-static-lookup-table-registry-v1"
+    },
+    "static_table_registry_scope": {
+      "const": "stwo_parameterized_decoding_shared_static_lookup_table_registry"
+    },
+    "static_table_registry_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "static_table_commitments": {
+      "type": "array",
+      "minItems": 2,
+      "items": { "$ref": "#/$defs/static_table_commitment" }
+    },
+    "lookup_rows_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "flattened_lookup_rows": {
+      "type": "array",
+      "items": { "type": "integer" }
+    },
+    "normalization_proof_envelope": {
+      "$ref": "#/$defs/embedded_shared_normalization_proof"
+    },
+    "activation_proof_envelope": {
+      "$ref": "#/$defs/embedded_shared_activation_proof"
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "hash_blake2b_256_hex": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "static_table_commitment": {
+      "type": "object",
+      "required": [
+        "table_id",
+        "statement_version",
+        "semantic_scope",
+        "table_commitment",
+        "row_count",
+        "row_width"
+      ],
+      "properties": {
+        "table_id": {
+          "enum": [
+            "phase5-normalization-q8-v1",
+            "phase3-binary-step-activation-v1"
+          ]
+        },
+        "statement_version": { "type": "string", "minLength": 1 },
+        "semantic_scope": { "type": "string", "minLength": 1 },
+        "table_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "row_count": { "type": "integer", "minimum": 1 },
+        "row_width": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "normalization_claim_row": {
+      "type": "object",
+      "required": [
+        "norm_sq_memory_index",
+        "inv_sqrt_q8_memory_index",
+        "expected_norm_sq",
+        "expected_inv_sqrt_q8"
+      ],
+      "properties": {
+        "norm_sq_memory_index": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "inv_sqrt_q8_memory_index": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "expected_norm_sq": { "type": "integer" },
+        "expected_inv_sqrt_q8": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "activation_claim_row": {
+      "type": "object",
+      "required": [
+        "input_memory_index",
+        "output_memory_index",
+        "expected_input",
+        "expected_output"
+      ],
+      "properties": {
+        "input_memory_index": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "output_memory_index": { "type": "integer", "minimum": 0, "maximum": 255 },
+        "expected_input": { "type": "integer" },
+        "expected_output": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "normalization_lookup_proof_envelope": {
+      "type": "object",
+      "required": [
+        "proof_backend",
+        "proof_backend_version",
+        "statement_version",
+        "semantic_scope",
+        "canonical_table_rows",
+        "claimed_rows",
+        "proof"
+      ],
+      "properties": {
+        "proof_backend": { "const": "stwo" },
+        "proof_backend_version": { "type": "string", "minLength": 1 },
+        "statement_version": { "type": "string", "minLength": 1 },
+        "semantic_scope": { "type": "string", "minLength": 1 },
+        "canonical_table_rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "integer", "minimum": 0 },
+              { "type": "integer", "minimum": 0 }
+            ],
+            "items": false
+          }
+        },
+        "claimed_rows": {
+          "type": "array",
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              { "type": "integer", "minimum": 0 },
+              { "type": "integer", "minimum": 0 }
+            ],
+            "items": false
+          }
+        },
+        "proof": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "activation_lookup_row": {
+      "type": "object",
+      "required": ["input", "output"],
+      "properties": {
+        "input": { "type": "integer" },
+        "output": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "shared_lookup_proof_envelope": {
+      "type": "object",
+      "required": [
+        "proof_backend",
+        "proof_backend_version",
+        "statement_version",
+        "semantic_scope",
+        "canonical_table_rows",
+        "claimed_rows",
+        "proof"
+      ],
+      "properties": {
+        "proof_backend": { "const": "stwo" },
+        "proof_backend_version": { "type": "string", "minLength": 1 },
+        "statement_version": { "type": "string", "minLength": 1 },
+        "semantic_scope": { "type": "string", "minLength": 1 },
+        "canonical_table_rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/activation_lookup_row" }
+        },
+        "claimed_rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/activation_lookup_row" }
+        },
+        "proof": {
+          "type": "array",
+          "items": { "type": "integer", "minimum": 0, "maximum": 255 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "embedded_shared_normalization_proof": {
+      "type": "object",
+      "required": [
+        "statement_version",
+        "semantic_scope",
+        "claimed_rows",
+        "proof_envelope"
+      ],
+      "properties": {
+        "statement_version": { "type": "string", "minLength": 1 },
+        "semantic_scope": { "type": "string", "minLength": 1 },
+        "claimed_rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/normalization_claim_row" }
+        },
+        "proof_envelope": {
+          "$ref": "#/$defs/normalization_lookup_proof_envelope"
+        }
+      },
+      "additionalProperties": false
+    },
+    "embedded_shared_activation_proof": {
+      "type": "object",
+      "required": [
+        "statement_version",
+        "semantic_scope",
+        "claimed_rows",
+        "proof_envelope"
+      ],
+      "properties": {
+        "statement_version": { "type": "string", "minLength": 1 },
+        "semantic_scope": { "type": "string", "minLength": 1 },
+        "claimed_rows": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/activation_claim_row" }
+        },
+        "proof_envelope": {
+          "$ref": "#/$defs/shared_lookup_proof_envelope"
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

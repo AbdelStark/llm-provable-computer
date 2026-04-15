@@ -4,9 +4,16 @@
 .DS_Store
 __pycache__/
 *.pyc
+scripts/node_modules/
+.agents/
+.claude/
+.codex/
+CLAUDE.md
+AI_REVIEW_BOTS_BEST_PRACTICES_*.md
 **/.claude/tsc-cache/
 **/.claude/cache/
 **/.tldr/
 **/.tldrignore
 compiled/
 docs/artifacts/*.proof.json
+mutants.out/

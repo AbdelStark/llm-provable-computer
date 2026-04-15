@@ -1,0 +1,87 @@
+[package]
+name = "llm-provable-computer-fuzz"
+version = "0.0.0"
+publish = false
+edition = "2021"
+
+[package.metadata]
+cargo-fuzz = true
+
+[dependencies]
+libfuzzer-sys = "0.4"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+llm-provable-computer = { path = "..", version = "0.1.0", features = ["stwo-backend"] }
+
+[[bin]]
+name = "phase12_decoding_manifest"
+path = "fuzz_targets/phase12_decoding_manifest.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase14_decoding_manifest"
+path = "fuzz_targets/phase14_decoding_manifest.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase12_shared_lookup_artifact"
+path = "fuzz_targets/phase12_shared_lookup_artifact.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase24_decoding_state_relation_accumulator"
+path = "fuzz_targets/phase24_decoding_state_relation_accumulator.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase25_intervalized_decoding_state_relation"
+path = "fuzz_targets/phase25_intervalized_decoding_state_relation.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase26_folded_intervalized_decoding_state_relation"
+path = "fuzz_targets/phase26_folded_intervalized_decoding_state_relation.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase27_chained_folded_intervalized_decoding_state_relation"
+path = "fuzz_targets/phase27_chained_folded_intervalized_decoding_state_relation.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase28_aggregated_chained_folded_intervalized_decoding_state_relation"
+path = "fuzz_targets/phase28_aggregated_chained_folded_intervalized_decoding_state_relation.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase29_recursive_compression_input_contract"
+path = "fuzz_targets/phase29_recursive_compression_input_contract.rs"
+test = false
+doc = false
+bench = false
+
+[[bin]]
+name = "phase30_decoding_step_proof_envelope_manifest"
+path = "fuzz_targets/phase30_decoding_step_proof_envelope_manifest.rs"
+test = false
+doc = false
+bench = false
+
+[workspace]
+members = ["."]

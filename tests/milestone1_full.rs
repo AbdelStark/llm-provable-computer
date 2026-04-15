@@ -130,6 +130,36 @@ fn shipped_workflow_cases() -> Vec<WorkflowCase> {
             max_steps: 512,
         },
         WorkflowCase {
+            path: "programs/dot_product.tvm",
+            program_name: "dot_product",
+            config: TransformerVmConfig {
+                num_layers: 2,
+                ..TransformerVmConfig::default()
+            },
+            expected_acc: 70,
+            max_steps: 128,
+        },
+        WorkflowCase {
+            path: "programs/matmul_2x2.tvm",
+            program_name: "matmul_2x2",
+            config: TransformerVmConfig {
+                num_layers: 2,
+                ..TransformerVmConfig::default()
+            },
+            expected_acc: 134,
+            max_steps: 256,
+        },
+        WorkflowCase {
+            path: "programs/single_neuron.tvm",
+            program_name: "single_neuron",
+            config: TransformerVmConfig {
+                num_layers: 2,
+                ..TransformerVmConfig::default()
+            },
+            expected_acc: 1,
+            max_steps: 128,
+        },
+        WorkflowCase {
             path: "programs/memory_roundtrip.tvm",
             program_name: "memory_roundtrip",
             config: TransformerVmConfig {

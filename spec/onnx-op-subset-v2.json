@@ -1,0 +1,20 @@
+{
+  "version": "onnx-op-subset-v2",
+  "domain": "",
+  "opset_version": 19,
+  "operators": [
+    "Add",
+    "Cast",
+    "Concat",
+    "Equal",
+    "Gather",
+    "Greater",
+    "Less",
+    "MatMul",
+    "Mod",
+    "Mul",
+    "Or",
+    "Round"
+  ],
+  "notes": "Operator subset emitted by per-instruction ONNX export in current research-v2 one-step semantics flow."
+}

@@ -1,42 +1,225 @@
 name: CI
 
+permissions:
+  contents: read
+
 on:
+  pull_request:
+    paths:
+      - ".github/workflows/**"
+      - "src/**/*.rs"
+      - "tests/**"
+      - "programs/**"
+      - "scripts/*.sh"
+      - "scripts/**/*.sh"
+      - "docs/engineering/hardening-policy.md"
+      - "docs/engineering/hardening-strategy.md"
+      - "zizmor.yml"
+      - "deny.toml"
+      - "Cargo.toml"
+      - "Cargo.lock"
+      - "fuzz/Cargo.toml"
+      - "fuzz/Cargo.lock"
+      - "vendor/onnx-protobuf/**"
   push:
     branches:
-      - main
-  pull_request:
+      - "main"
+  schedule:
+    - cron: "17 4 * * *"
+  workflow_dispatch:
 
 jobs:
+  pr-smoke:
+    name: lightweight PR lib smoke
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: stable
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+
+      - name: Restore pinned nightly toolchain cache
+        uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809
+        with:
+          path: |
+            ~/.rustup/toolchains/nightly-2025-07-14-*
+            ~/.rustup/downloads
+            ~/.rustup/update-hashes
+          key: rustup-nightly-2025-07-14-${{ runner.os }}-${{ runner.arch }}
+
+      - name: Validate local merge gate script
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y shellcheck python3-pip
+          bash scripts/run_shellcheck_suite.sh
+
+      - name: Run workflow audit when workflow surfaces change
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed_workflow_inputs="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" -- .github/workflows/ zizmor.yml)" || {
+            echo "workflow audit diff computation failed" >&2
+            exit 1
+          }
+          if [[ -z "$changed_workflow_inputs" ]]; then
+            echo "workflow audit not required for this PR"
+            exit 0
+          fi
+          python3 -m pip install --user uv
+          export PATH="$HOME/.local/bin:$PATH"
+          bash scripts/run_workflow_audit_suite.sh
+
+      - name: Run dependency audit when dependency surfaces change
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          changed_dependency_inputs="$(git diff --name-only "$BASE_SHA...$HEAD_SHA" -- Cargo.toml Cargo.lock fuzz/Cargo.toml fuzz/Cargo.lock deny.toml scripts/run_dependency_audit_suite.sh vendor/onnx-protobuf/)" || {
+            echo "dependency audit diff computation failed" >&2
+            exit 1
+          }
+          if [[ -z "$changed_dependency_inputs" ]]; then
+            echo "dependency audit not required for this PR"
+            exit 0
+          fi
+          audit_root="$RUNNER_TEMP/dependency-audit-tools"
+          cargo install --locked cargo-audit --version 0.22.1 --root "$audit_root"
+          cargo install --locked cargo-deny --version 0.19.0 --root "$audit_root"
+          export PATH="$audit_root/bin:$PATH"
+          bash scripts/run_dependency_audit_suite.sh
+
+  dependency-audit:
+    name: dependency audit
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: stable
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+
+      - name: Run dependency audit suite
+        run: |
+          audit_root="$RUNNER_TEMP/dependency-audit-tools"
+          cargo install --locked cargo-audit --version 0.22.1 --root "$audit_root"
+          cargo install --locked cargo-deny --version 0.19.0 --root "$audit_root"
+          export PATH="$audit_root/bin:$PATH"
+          bash scripts/run_dependency_audit_suite.sh
+
+      - name: Run lightweight regression smoke
+        run: |
+          cargo test -q --lib statement_spec_contract_is_synced_with_constants
+          smoke_targets=(assembly e2e interpreter runtime vanillastark_smoke)
+          for test_target in "${smoke_targets[@]}"; do
+            cargo test -q --test "$test_target"
+          done
+          rustup toolchain install nightly-2025-07-14 --profile minimal
+          stwo_smoke=stwo_backend::decoding::tests::phase28_aggregated_chained_folded_intervalized_state_relation_rejects_header_mismatch_before_nested_checks
+          cargo +nightly-2025-07-14 test -q \
+            --features stwo-backend \
+            --lib "$stwo_smoke" \
+            -- \
+            --exact
+
+  statement-spec:
+    name: statement spec contract
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: stable
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+
+      - name: Validate statement spec constants contract
+        run: |
+          cargo test --quiet -- --list | grep -q "statement_spec_contract_is_synced_with_constants"
+          cargo test --quiet statement_spec_contract_is_synced_with_constants
+
   cargo-test:
-    name: cargo test (${{ matrix.name }})
+    name: cargo nextest (${{ matrix.name }})
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:
         include:
           - name: default
-            cargo_args: ""
+            features: ""
             needs_python: false
+            nextest_profile: ci
+            rust_toolchain: stable
           - name: burn-model
-            cargo_args: "--features burn-model"
+            features: "burn-model"
             needs_python: false
+            nextest_profile: ci
+            rust_toolchain: stable
           - name: onnx-export
-            cargo_args: "--features onnx-export"
+            features: "onnx-export"
             needs_python: true
+            nextest_profile: ci
+            rust_toolchain: stable
           - name: full
-            cargo_args: "--features full"
+            features: "full"
             needs_python: true
+            nextest_profile: ci
+            rust_toolchain: stable
+          - name: full-stwo-backend
+            features: "full,stwo-backend"
+            needs_python: true
+            nextest_profile: ci-stwo
+            rust_toolchain: nightly-2025-07-14
+          - name: stwo-backend
+            features: "stwo-backend"
+            needs_python: false
+            nextest_profile: ci-stwo
+            rust_toolchain: nightly-2025-07-14
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: ${{ matrix.rust_toolchain }}
 
       - name: Install Python
         if: matrix.needs_python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.11"
 
@@ -47,24 +230,58 @@ jobs:
           python -m pip install -r scripts/requirements.txt
 
       - name: Restore Rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
 
-      - name: Run cargo test
-        run: cargo test ${{ matrix.cargo_args }}
+      - name: Install cargo-nextest
+        uses: taiki-e/install-action@80e6af7a2ec7f280fffe2d0a9d3a12a9d11d86e9
+        with:
+          tool: cargo-nextest@0.9.132
+
+      - name: Run cargo nextest
+        run: |
+          feature_args=()
+          if [ -n "${{ matrix.features }}" ]; then
+            feature_args+=(--features "${{ matrix.features }}")
+          fi
+          cargo nextest run \
+            --workspace \
+            --all-targets \
+            --profile ${{ matrix.nextest_profile }} \
+            --no-fail-fast \
+            "${feature_args[@]}"
+
+      - name: Run cargo doctests
+        run: |
+          feature_args=()
+          if [ -n "${{ matrix.features }}" ]; then
+            feature_args+=(--features "${{ matrix.features }}")
+          fi
+          cargo test --workspace --doc "${feature_args[@]}"
+
+      - name: Upload nextest junit report
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: nextest-junit-${{ matrix.name }}
+          path: target/nextest/${{ matrix.nextest_profile }}/junit.xml
+          if-no-files-found: error
 
   milestone-1-proof:
     name: export and validate ONNX workflow
+    if: github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
 
       - name: Install Rust
-        uses: dtolnay/rust-toolchain@stable
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
 
       - name: Install Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
         with:
           python-version: "3.11"
 
@@ -74,7 +291,7 @@ jobs:
           python -m pip install -r scripts/requirements.txt
 
       - name: Restore Rust cache
-        uses: Swatinem/rust-cache@v2
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
 
       - name: Export ONNX from CLI
         run: cargo run --features onnx-export --bin tvm -- export-onnx programs/fibonacci.tvm -o compiled/fibonacci
@@ -84,3 +301,76 @@ jobs:
 
       - name: Validate exported ONNX in Python
         run: python scripts/validate_onnx.py compiled/fibonacci --program-name fibonacci --expected-acc 21 --expected-halted true
+
+      - name: Generate research v2 one-step semantic artifact
+        run: cargo run --features onnx-export --bin tvm -- research-v2-step programs/addition.tvm -o compiled/research-v2-addition-step.json --max-steps 1
+
+      - name: Generate research v2 prefix-trace semantic artifact
+        run: cargo run --features onnx-export --bin tvm -- research-v2-trace programs/addition.tvm -o compiled/research-v2-addition-trace.json --max-steps 8
+
+      - name: Generate research v2 matrix semantic artifact
+        run: cargo run --features onnx-export --bin tvm -- research-v2-matrix -o compiled/research-v2-matrix.json --program programs/addition.tvm --program programs/counter.tvm --max-steps 8
+
+  fuzz-smoke:
+    name: fuzz smoke (${{ matrix.target }})
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - target: phase12_decoding_manifest
+            corpus: fuzz/corpus/phase12_decoding_manifest
+          - target: phase14_decoding_manifest
+            corpus: fuzz/corpus/phase14_decoding_manifest
+          - target: phase12_shared_lookup_artifact
+            corpus: fuzz/corpus/phase12_shared_lookup_artifact
+          - target: phase29_recursive_compression_input_contract
+            corpus: fuzz/corpus/phase29_recursive_compression_input_contract
+          - target: phase30_decoding_step_proof_envelope_manifest
+            corpus: fuzz/corpus/phase30_decoding_step_proof_envelope_manifest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Read fuzz toolchain
+        id: fuzz-toolchain
+        run: |
+          channel="$(awk -F'\"' '/^channel = / { print $2 }' fuzz/rust-toolchain.toml)"
+          if [ -z "$channel" ]; then
+            echo "failed to read toolchain.channel from fuzz/rust-toolchain.toml" >&2
+            exit 1
+          fi
+          echo "channel=$channel" >> "$GITHUB_OUTPUT"
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: ${{ steps.fuzz-toolchain.outputs.channel }}
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+
+      - name: Install cargo-fuzz
+        env:
+          FUZZ_TOOLCHAIN: ${{ steps.fuzz-toolchain.outputs.channel }}
+        run: cargo +"$FUZZ_TOOLCHAIN" install cargo-fuzz --version 0.13.1 --locked
+
+      - name: Install Python
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065
+        with:
+          python-version: "3.11"
+
+      - name: Regenerate fuzz corpus
+        run: python3 scripts/fuzz/generate_decoding_fuzz_corpus.py
+
+      - name: Run fuzz smoke
+        env:
+          FUZZ_TOOLCHAIN: ${{ steps.fuzz-toolchain.outputs.channel }}
+          FUZZ_TARGET: ${{ matrix.target }}
+          FUZZ_CORPUS: ${{ matrix.corpus }}
+        run: cargo +"$FUZZ_TOOLCHAIN" fuzz run "$FUZZ_TARGET" "$FUZZ_CORPUS" -- -runs=32

@@ -1,0 +1,38 @@
+name: Formal Contracts
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  decoding-contract-kernel:
+    name: decoding formal contract kernel
+    runs-on: ubuntu-22.04
+    timeout-minutes: 120
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+        with:
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: stable
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+
+      - name: Install Kani
+        run: cargo install kani-verifier --version 0.64.0 --locked
+
+      - name: Setup Kani
+        run: cargo kani setup
+
+      - name: Run formal contract kernel
+        run: |
+          chmod +x scripts/run_formal_contract_suite.sh
+          scripts/run_formal_contract_suite.sh

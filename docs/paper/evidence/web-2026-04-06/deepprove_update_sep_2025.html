@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lagrange Engineering Update: September 2025</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; line-height: 1.45; color: #111; }
+    h1, h2 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f7f7f7; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+    .meta { margin-bottom: 1.5rem; }
+    .meta li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>Lagrange Engineering Update: September 2025</h1>
+  <p>This is an inert, repo-local evidence wrapper. It stores browser-rendered visible text and content hashes so the snapshot can be inspected without executing third-party scripts or loading remote assets.</p>
+  <ul class="meta">
+    <li><strong>Label:</strong> <code>deepprove_update_sep_2025</code></li>
+    <li><strong>Source URL:</strong> <code>https://www.lagrange.dev/engineering-updates/september-2025</code></li>
+    <li><strong>Rendered HTML SHA-256:</strong> <code>66116718561860052de45709e3d292e04d8e7eb637fb180918169cb20efdfdc5</code></li>
+  </ul>
+  <h2>Rendered Visible Text</h2>
+  <pre>TECHNOLOGY
+ECOSYSTEM
+FOUNDATION
+DOCS
+ARTICLES
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+STAKE $LA FOR 20% EXPECTED APY
+October 20, 2025
+Lagrange Engineering Update: September 2025
+
+In September, Lagrange’s research and engineering teams tackled key structural upgrades and frontier milestones for DeepProve. We successfully proved inference for Google’s Gemma3, introduced a unified Einsum layer that simplifies and accelerates linear operations, eliminated redundant tensor commitments across layers, and deployed a new graph architecture built for distributed proving. Together, these changes strengthen DeepProve’s foundation as the proving system capable of scaling with the next generation of AI models—efficient, modular, and cryptographically precise.
+
+Proving Gemma3 (270M parameters)
+
+September’s largest milestone was proving inference for Google’s Gemma3, making DeepProve the first zkML proof system to prove one of the fastest growing AI models to date.
+
+Gemma3 introduces a new class of transformer architectures built for efficiency with Grouped Query Attention, alternating local and global attention layers, RMSNorm, GeGLU activations, and Rotary Positional Encoding (RoPE). Each feature required extending DeepProve’s existing GPT-style proof framework into a more modular system capable of handling evolving model designs.
+
+This work included:
+
+Adapting MHA proofs to support Grouped Query Attention through head-grouping and MLE-based pruning.
+Adding standalone support for local + global attention masking to alternate scopes without accuracy loss.
+Implementing RoPE proofs using hadamard products and additive commitments for efficient scaling with sequence length.
+Refactoring normalization proofs to handle RMSNorm layers across multiple instances per block.
+Extending activation proofs to cover GeGLU via matrix and Hadamard composition.
+
+Together, these upgrades make DeepProve compatible with the newest generation of efficient LLMs.
+
+Removing Tensor Duplication
+
+Certain models, including Gemma3, reuse the same tensors across multiple layers.
+
+A prime example is Rotary Positional Encoding (RoPE), which appears repeatedly throughout the transformer stack.
+
+Naively committing to each instance separately would multiply proof cost, since each tensor must be committed, opened, and verified independently, a serious bottleneck given RoPE’s linear growth with sequence length and embedding dimension.
+
+To resolve this, DeepProve now detects and deduplicates shared tensors during graph construction.
+
+Identical tensors are recognized once and committed only a single time.
+Shared references propagate across layers without expensive cloning
+Proving time and memory usage are both reduced substantially especially on long-sequence models.
+
+This optimization is fully general and will apply automatically to any future architecture with reusable tensor structures.
+
+New Graph Architecture
+
+We replaced DeepProve’s hybrid graph representation with a fully in-house port-graph framework. The previous version mixed simple-graph and port-graph concepts, which blurred data-flow directionality and limited automated testing.
+
+The new graph layer enforces explicit structure:
+
+Strict connection semantics between layer inputs and outputs.
+Isolated graph logic for independent validation Unified foundation across all DeepProve components, including distributed proving.
+
+This rewrite gives us full control of the underlying graph library, improving both reliability and parallelization.
+
+Unified Einsum Layer
+
+DeepProve’s proving core previously contained several specialized linear layers (Dense, MatMul, Q @ Kᵀ) that evolved separately. To simplify and accelerate these operations, we introduced a configurable Einsum layer inspired by PyTorch’s notation.
+
+Key advantages:
+
+Unified abstraction: all linear operations are now defined as einsum expressions.
+Padding-free proving: avoids unnecessary power-of-two padding (e.g., 12→16 heads in GPT2).
+Aggregated sumchecks:  Compute all “unpadded” polynomial equations and run a single sumcheck for all of them 
+Implicit permutations: automatically reorders tensors internally, removing explicit permutation layers.
+
+The Einsum layer reduces code complexity while delivering measurable gains in proving throughput for large models.
+
+Looking Ahead
+
+With Gemma3 proven, tensor deduplication in place, and a stronger graph foundation, DeepProve’s architecture is now optimized for distributed, modular proving networks designed to scale the frontier of safe AI. Forthcoming work will focus on multi-node coordination and runtime parallelization, scaling verifiable AI from single GPUs to global proving networks.
+
+Recent Updates
+1.13.2026
+
+Lagrange Engineering Update: Q4 2025
+
+11.11.2025
+
+Apply to the Lagrange Internship Program
+
+11.3.2025
+
+Meet the Lagrange Interns (2025 Cohort)
+
+9.18.2025
+
+Meet the Lagrange Interns (2024 Cohort)
+
+9.10.2025
+
+Lagrange Engineering Update: August 2025
+
+7.24.2025
+
+Lagrange Engineering Update: July 2025
+
+Sign up for updates
+RESOURCES
+Github
+DeepProve
+Defense
+Docs
+ZK Prover Network
+Ecosystem
+Blog
+ZK Coprocessor
+Engineering
+ABOUT
+Careers
+Press Kit
+Foundation
+Terms &amp; Conditions
+Privacy Policy
+FOLLOW
+CONTACT
+Building with Lagrange?
+Questions about our products
+Support@lagrange.dev
+© Lagrange 2025
+English</pre>
+</body>
+</html>

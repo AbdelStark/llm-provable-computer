@@ -1,0 +1,16 @@
+{
+  "architectures": [
+    "Gemma3ForCausalLM"
+  ],
+  "hidden_size": 5376,
+  "intermediate_size": 21504,
+  "num_hidden_layers": 62,
+  "num_attention_heads": 32,
+  "num_key_value_heads": 16,
+  "head_dim": 128,
+  "sliding_window": 1024,
+  "attn_logit_softcapping": null,
+  "query_pre_attn_scalar": 168,
+  "source_url": "https://huggingface.co/Changgil/google-gemma-3-27b-it-text/raw/4e2fb1ce4d063d7877a056b82f0485f4b568563d/config.json",
+  "source_sha256": "bd4724fd0098c1611881ceb958a0b294e870adfe21713b0a0cb0f47fff1c379e"
+}

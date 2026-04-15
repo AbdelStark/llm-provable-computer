@@ -109,6 +109,17 @@ pub struct Program {
 }
 
 impl Program {
+    fn validate_memory_size(memory_size: usize) -> Result<()> {
+        if memory_size > usize::from(u8::MAX) {
+            return Err(VmError::InvalidConfig(format!(
+                "memory size {} exceeds the encoded stack/address limit of {} cells",
+                memory_size,
+                u8::MAX
+            )));
+        }
+        Ok(())
+    }
+
     pub fn new(instructions: Vec<Instruction>, memory_size: usize) -> Self {
         Self {
             instructions,
@@ -116,14 +127,16 @@ impl Program {
         }
     }
 
+    pub fn from_parts(instructions: Vec<Instruction>, initial_memory: Vec<i16>) -> Result<Self> {
+        Self::validate_memory_size(initial_memory.len())?;
+        Ok(Self {
+            instructions,
+            initial_memory,
+        })
+    }
+
     pub fn with_initial_memory(mut self, initial_memory: Vec<i16>) -> Result<Self> {
-        if initial_memory.len() > usize::from(u8::MAX) {
-            return Err(VmError::InvalidConfig(format!(
-                "memory size {} exceeds the encoded stack/address limit of {} cells",
-                initial_memory.len(),
-                u8::MAX
-            )));
-        }
+        Self::validate_memory_size(initial_memory.len())?;
         if initial_memory.len() != self.initial_memory.len() {
             return Err(VmError::InvalidConfig(format!(
                 "initial memory length {} does not match configured memory size {}",
@@ -232,6 +245,18 @@ mod tests {
         let err = Program::new(vec![Instruction::Halt], 256)
             .with_initial_memory(vec![0; 256])
             .unwrap_err();
+        assert!(err.to_string().contains("encoded stack/address limit"));
+    }
+
+    #[test]
+    fn from_parts_sets_values() {
+        let program = Program::from_parts(vec![Instruction::Halt], vec![10, 20, 30]).unwrap();
+        assert_eq!(program.initial_memory(), &[10, 20, 30]);
+    }
+
+    #[test]
+    fn from_parts_rejects_exceeding_u8_max() {
+        let err = Program::from_parts(vec![Instruction::Halt], vec![0; 256]).unwrap_err();
         assert!(err.to_string().contains("encoded stack/address limit"));
     }
 

@@ -1,0 +1,16 @@
+{
+  "architectures": [
+    "Gemma3ForCausalLM"
+  ],
+  "hidden_size": 640,
+  "intermediate_size": 2048,
+  "num_hidden_layers": 18,
+  "num_attention_heads": 4,
+  "num_key_value_heads": 1,
+  "head_dim": 256,
+  "sliding_window": 512,
+  "attn_logit_softcapping": null,
+  "query_pre_attn_scalar": 256,
+  "source_url": "https://huggingface.co/HedronCreeper/gemma-3-270m-custom-hedron/raw/ac458437b3053e9d1ef5ca71fed58f3bf84b513c/config.json",
+  "source_sha256": "12371a6b5cfbe5849425093d1aace4c771ed6353a3fc8e3dc371ae6b307e0d8f"
+}

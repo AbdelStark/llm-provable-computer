@@ -369,12 +369,15 @@ impl Stark {
         let original_trace_length = 1 + boundary.iter().map(|(c, _, _)| *c).max().unwrap_or(0);
         let randomized_trace_length = original_trace_length + self.num_randomizers;
 
-        let mut proof_stream = ProofStream::deserialize(proof);
+        let mut proof_stream = match ProofStream::deserialize(proof) {
+            Some(stream) => stream,
+            None => return false,
+        };
 
         // Get Merkle roots of boundary quotient codewords
         let mut boundary_quotient_roots = Vec::new();
         for _ in 0..self.num_registers {
-            if let ProofObject::Bytes(root) = proof_stream.pull() {
+            if let Some(ProofObject::Bytes(root)) = proof_stream.pull() {
                 boundary_quotient_roots.push(root);
             } else {
                 return false;
@@ -382,7 +385,7 @@ impl Stark {
         }
 
         // Get Merkle root of randomizer polynomial
-        let randomizer_root = if let ProofObject::Bytes(root) = proof_stream.pull() {
+        let randomizer_root = if let Some(ProofObject::Bytes(root)) = proof_stream.pull() {
             root
         } else {
             return false;
@@ -416,12 +419,12 @@ impl Stark {
         for root in &boundary_quotient_roots {
             let mut leaf_map = std::collections::HashMap::new();
             for &i in &duplicated_indices {
-                let element = if let ProofObject::Element(e) = proof_stream.pull() {
+                let element = if let Some(ProofObject::Element(e)) = proof_stream.pull() {
                     e
                 } else {
                     return false;
                 };
-                let path = if let ProofObject::Path(p) = proof_stream.pull() {
+                let path = if let Some(ProofObject::Path(p)) = proof_stream.pull() {
                     p
                 } else {
                     return false;
@@ -438,12 +441,12 @@ impl Stark {
         let mut randomizer: std::collections::HashMap<usize, FieldElement> =
             std::collections::HashMap::new();
         for &i in &duplicated_indices {
-            let element = if let ProofObject::Element(e) = proof_stream.pull() {
+            let element = if let Some(ProofObject::Element(e)) = proof_stream.pull() {
                 e
             } else {
                 return false;
             };
-            let path = if let ProofObject::Path(p) = proof_stream.pull() {
+            let path = if let Some(ProofObject::Path(p)) = proof_stream.pull() {
                 p
             } else {
                 return false;
@@ -519,6 +522,10 @@ impl Stark {
             }
         }
 
+        if proof_stream.pull().is_some() {
+            return false;
+        }
+
         true
     }
 }
@@ -564,5 +571,39 @@ mod tests {
         let wrong_boundary = rp.boundary_constraints(wrong_output);
         let verdict = stark.verify(&proof, &air, &wrong_boundary);
         assert!(!verdict, "invalid stark proof should not verify");
+    }
+
+    #[test]
+    fn test_stark_rejects_trailing_proof_objects() {
+        let expansion_factor = 4;
+        let num_colinearity_checks = 2;
+        let security_level = 2;
+
+        let rp = RescuePrime::new();
+        let input_element = FieldElement::sample(b"0xdeadbeef");
+        let output_element = rp.hash(input_element);
+        let num_cycles = rp.n + 1;
+        let state_width = rp.m;
+
+        let stark = Stark::new(
+            expansion_factor,
+            num_colinearity_checks,
+            security_level,
+            state_width,
+            num_cycles,
+            2,
+        );
+
+        let trace = rp.trace(input_element);
+        let air = rp.transition_constraints(stark.omicron);
+        let boundary = rp.boundary_constraints(output_element);
+        let proof = stark.prove(&trace, &air, &boundary);
+
+        let mut stream = ProofStream::deserialize(&proof).expect("deserialize proof");
+        stream.push(ProofObject::Bytes(vec![0u8]));
+        let tampered = stream.serialize();
+
+        let verdict = stark.verify(&tampered, &air, &boundary);
+        assert!(!verdict, "proof with trailing objects should not verify");
     }
 }

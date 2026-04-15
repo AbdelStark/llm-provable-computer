@@ -1,0 +1,8 @@
+{
+  "statement_version": "statement-v2-research-draft",
+  "semantic_scope": "matrix_prefix_trace_transformer_onnx_equivalence_under_fixed_profile",
+  "fixed_point_profile_ref": "spec/fixed-point-semantics-v2.json",
+  "onnx_op_subset_ref": "spec/onnx-op-subset-v2.json",
+  "artifact_schema_ref": "spec/statement-v2-matrix-certificate.schema.json",
+  "notes": "Research-stage matrix statement over multiple programs. Not a full cryptographic proof of transformer semantics."
+}

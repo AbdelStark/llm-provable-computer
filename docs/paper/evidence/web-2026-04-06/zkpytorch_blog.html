@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>zkPyTorch: Verifiable PyTorch with Zero-Knowledge Proofs</title>
+  <style>
+    body { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; margin: 2rem; line-height: 1.45; color: #111; }
+    h1, h2 { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, sans-serif; }
+    code { background: #f4f4f4; padding: 0.1rem 0.25rem; }
+    pre { white-space: pre-wrap; word-break: break-word; background: #f7f7f7; border: 1px solid #ddd; padding: 1rem; overflow-x: auto; }
+    .meta { margin-bottom: 1.5rem; }
+    .meta li { margin-bottom: 0.35rem; }
+  </style>
+</head>
+<body>
+  <h1>zkPyTorch: Verifiable PyTorch with Zero-Knowledge Proofs</h1>
+  <p>This is an inert, repo-local evidence wrapper. It stores browser-rendered visible text and content hashes so the snapshot can be inspected without executing third-party scripts or loading remote assets.</p>
+  <ul class="meta">
+    <li><strong>Label:</strong> <code>zkpytorch_blog</code></li>
+    <li><strong>Source URL:</strong> <code>https://blog.polyhedra.network/zkpytorch/</code></li>
+    <li><strong>Rendered HTML SHA-256:</strong> <code>fbf5a03ce39634bc70d1ac5736be7fd728a8486ec143181f2bc59c46826a259e</code></li>
+  </ul>
+  <h2>Rendered Visible Text</h2>
+  <pre>zkPyTorch: Verifiable PyTorch with Zero-Knowledge Proofs
+Jun 5, 2025
+
+As Artificial Intelligence (AI) is used deeper in critical industries such as healthcare, finance, and autonomous systems, ensuring the reliability, transparency, and security of machine learning (ML) computations becomes increasingly crucial.  Traditional ML services, often treated as black boxes, lack transparency, making them vulnerable to issues such as model theft, incorrect or malicious execution, and data privacy concerns. 
+
+Zero-Knowledge Machine Learning (ZKML) provides an innovative solution to this challenge. It employs a cryptographic primitive called  Zero-Knowledge Proofs (ZKPs) to provide a cryptographically secure verification mechanism for ML models. ZKPs enable one party (the prover) to convince another (the verifier) that a computation was correctly executed without revealing any sensitive or proprietary information involved in the computation. In a ZKML setting, ZKPs allow the ML service provider to convince users that the output is the result of correct inference without revealing the model parameters, which are considered valuable assets due to the high cost of training.
+
+Introducing zkPyTorch
+
+Polyhedra Network introduces zkPyTorch, a revolutionary compiler explicitly engineered to streamline Zero-Knowledge Machine Learning. zkPyTorch effectively bridges the robust capabilities of the widely-used PyTorch ML framework with advanced ZKP engines. This integration enables AI developers to write standard ML code in familiar environments without needing to learn new ZKP-specific programming paradigms. It automatically translates high-level ML operations, such as convolution, matrix multiplication, ReLU, softmax, and attention, into verifiable ZKP circuits while applying a suite of built-in optimizations tailored to common ZKML computation patterns, ensuring both correctness and computational efficiency.
+
+Importance of zkPyTorch in AI Ecosystems
+
+Modern ML ecosystems have significant issues around data security, computational verifiability, and model transparency. ML models used in critical sectors handle sensitive personal data, proprietary model details, and high-value intellectual property. ZKML addresses these concerns by providing a robust verification process that maintains model integrity and data confidentiality simultaneously, ensuring secure and trusted AI deployments. However, existing ZKML approaches require specialized cryptographic expertise, making them inaccessible to traditional AI developers. zkPyTorch bridges the gap between ML frameworks and ZKP engines, enabling AI developers to use standard ML code to build ZKML applications. This significantly lowers the barrier to developing scalable, privacy-preserving, and verifiable machine learning systems.
+
+Workflow of zkPyTorch
+
+Figure 1: A high-level overview of ZKPyTorch.
+
+As shown in Figure 1, zkPyTorch converts standard PyTorch models into ZKP-compatible circuits through carefully designed three modules, including a preprocessing module, a ZK-friendly quantization module, and a circuit optimization module. These modules work together to automatically translate standard ML code written in PyTorch into ZKP circuits, which can be recognized by ZKP engines such as Expander to generate zero-knowledge proofs. This approach enables AI developers to build efficient ZKML applications without  needing to learn new ZKP-specific programming paradigms.
+
+Module 1: Model Preprocessing
+
+The first module involves converting PyTorch models into structured computational graphs using the Open Neural Network Exchange (ONNX) format. ONNX provides a standardized intermediate representation, capturing complex ML operations uniformly. This preprocessing phase simplifies the intricate nature of ML operations, ensuring they are efficiently prepared for ZKP circuit translation.
+
+Module 2: ZKP-Friendly Quantization
+
+The quantization module is crucial, converting the floating-point computations used in traditional ML models into integer-based arithmetic compatible with ZKP constraints. zkPyTorch utilizes integer quantization methods specifically designed for finite field computations, additionally transforming ZKP-unfriendly nonlinear operations into efficient ZKP-friendly table lookup operations.  This approach significantly reduces computational complexity while preserving model accuracy.
+
+Module 3: Hierarchical Circuit Optimization
+
+The hierarchical optimization module implemented by zkPyTorch includes:
+
+Optimizing Batch Processing: Specifically designed for sequential operations, this significantly reduces complexity and computational demands, particularly for transformer-based language models.
+Optimized Primitive Operations: The use of FFT-based convolutions and lookup tables substantially accelerates primitive operations, greatly enhancing overall circuit efficiency.
+Parallel Circuit Execution: Enables efficient use of hardware resources by distributing computational tasks across multiple processing cores, drastically enhancing scalability and speed of proof generation.
+Deep Technical Exploration
+
+Directed Acyclic Graphs (DAG). The utilization of Directed Acyclic Graphs (DAGs) in zkPyTorch to manage ML computational processes. DAG-based representations systematically capture the complex dependencies to advanced ML models. As shown in Figure 2, each node within the DAG represents a specific operation such as matrix transpose, matrix multiplication, division, and softmax, while edges precisely illustrate the data flow between these operations. This clear and structured visualization aids significantly in both debugging and performance optimization. DAG-based approaches avoid cyclical dependencies, facilitating streamlined computational sequencing essential for optimized ZKP circuit generation. Moreover, they enable zkPyTorch to effectively handle sophisticated model architectures like transformers and residual networks, which often exhibit complex data pathways.
+
+Figure 2: Example of machine learning models represented as directed acyclic graphs
+
+Advanced Quantization Techniques. Advanced quantization techniques in zkPyTorch are essential for transforming floating-point computations into integer-based operations compatible with efficient finite field arithmetic in ZKP systems. zkPyTorch employs static integer quantization methods carefully designed to computational efficiency for proof generation without compromising model accuracy. This quantization process involves careful calibration, identifying optimal quantization scales to represent floating-point numbers to avoid overflow and large accuracy loss. Additionally, zkPyTorch addresses ZKP-specific quantization challenges for nonlinear operations, such as softmax and layer normalization. By converting nonlinear functions into table lookup operations, zkPyTorch enhances proof generation efficiency while ensuring that the generated proof is fully consistent with the output of the high-accuracy quantized model.
+
+Multi-Level Circuit Optimization. zkPyTorch employs a sophisticated hierarchical optimization strategy at multiple levels to ensure maximum efficiency:
+
+Optimizing Batch Processing: Batch processing techniques group multiple inference operations together, significantly reducing the complexity and computational demands, particularly beneficial for sequential operations common in transformer-based language models. As shown in Figure 3, traditional LLM inference generates outputs token by token. We verify the correctness of LLM inference by aggregating both the input and output tokens into a single prompt process. This allows us to validate that the prompt process is executed correctly and that the token generated during this phase matches the output tokens produced by standard LLM inference. In LLMs, the KV cache mechanism ensures that the output from a single prompt will match the results of multi-step decoding only if the model performs inference correctly.
+
+Figure 3: Batch verification of LLMs’ computation, where L is the input sequence length, N  is the output sequence length, and H is the model’s hidden dimension.
+
+Optimized Primitive Operations: zkPyTorch optimizes core machine learning operations at the primitive level. For instance, convolution operations, which are typically computationally intensive, are accelerated using Fast Fourier Transform (FFT)-based techniques that convert spatial-domain convolutions into more efficient frequency-domain multiplications. Nonlinear functions, such as ReLU and softmax, are implemented using precomputed lookup tables, significantly reducing computational overhead and enhancing circuit efficiency.
+Parallel Circuit Execution: zkPyTorch compiles machine learning operations into parallel circuits, enabling efficient proof generation by distributing computations across multiple processing cores. For example, tensor operations like matrix multiplication are decomposed into independent sub-tasks that can be executed concurrently on multiple CPU or GPU cores. This parallelization significantly boosts the throughput of proof generation, making it feasible to verify large-scale ML models quickly and efficiently.
+Comprehensive Performance Benchmarks
+
+Extensive benchmarking highlights zkPyTorch&#x27;s remarkable performance and practical viability across diverse ML models:
+
+VGG-16 Model Benchmark: zkPyTorch completes proof generation for the VGG-16 model in merely 6.3 seconds per image on the CIFAR-10 dataset, with negligible accuracy loss compared to traditional floating-point computations.
+Llama-3 Model Benchmark: zkPyTorch efficiently processes the massive 8-billion parameter Llama-3 model, achieving proof generation in roughly 150 seconds per token. This result retains an impressive 99.32% cosine similarity to the original model outputs, demonstrating substantial reliability and precision.
+	MODELS	PARAMETERS	CPU THREAD	TIME
+zkCNN	VGG-16	15.2 million	1	88s per image
+EZKL	nanoGPT	0.25 million	24	237s
+ZKML	GPT-2	117 million	64	159s per token
+				
+	VGG-16	15.2 million	1	6.3s per image
+zkPyTorch	ResNet-101	44.5 million	1	23s per image
+	Llama-3	8 billion	1	150s per token
+
+Table 1: The performance of ZKP schemes for convolutional and transformer neural networks
+
+Extensive Real-World Applications
+
+Verifiable Machine-Learning-as-a-Service (MLaaS). As machine learning models become increasingly valuable, AI developers can deploy their own models on cloud platforms to provide MLaaS. However, users often face challenges in verifying the correctness of model computations, while developers seek to protect their intellectual property by restricting access to the model’s underlying details. zkPyTorch allows cloud-hosted AI services to provide cryptographically verifiable inference results securely. As shown in Figure 4, AI developers can directly feed the Llama-3 model into zkPyTorch to construct a verifiable MLaaS system. With zkPyTorch integrating with the ZKP engine, the framework automatically generates ZKPs that are used to verify the correctness of inference results while safeguarding the confidentiality of the model.
+
+Figure 4: The use case of ZKPyTorch in variable Machine Learning-as-a-Service.
+
+Secure Model Valuation. zkPyTorch facilitates secure and transparent verification of AI models, allowing stakeholders to evaluate essential performance metrics without risking exposure of sensitive or proprietary model information. This secure valuation process ensures fairness, security, and transparency across the AI industry.
+
+Integration with EXPchain Blockchain. zkPyTorch seamlessly integrates with Polyhedra’s EXPchain blockchain, enhancing decentralized, secure, and verifiable AI-driven applications. This integration allows efficient smart contract interactions and robust on-chain verification processes, further strengthening the transparency and trustworthiness of blockchain ecosystems.
+
+Future Innovations and Roadmap
+
+Polyhedra is dedicated to continuous improvements and innovation:
+
+Open Source Community Engagement: Releasing zkPyTorch components to foster community participation and collaborative development.
+Broadened Model and Framework Compatibility: Expanding the compatibility and supporting diverse ML frameworks to enhance zkPyTorch’s utility and flexibility.
+Development Tools and SDKs: Creation of extensive development resources and software tools to simplify and accelerate the adoption of zkPyTorch in real-world applications.
+Conclusion
+
+zkPyTorch represents a transformative advancement in secure, verifiable, and efficient machine learning. By integrating robust zero-knowledge cryptographic techniques with the widely used PyTorch framework, zkPyTorch significantly advances AI deployment capabilities. Polyhedra continues to lead innovation in the secure AI domain, promoting transparency, trust, and scalability in machine learning applications.
+
+Stay tuned for ongoing updates and developments as we revolutionize secure AI with zkPyTorch.
+
+AI
+Zero Knowledge
+More Blog
+Feb 6, 2026
+The Next Era of Stablecoins: Ocash Is Rebuilding Payments for a Private, Compliant, AI-Driven World
+Ocash
+Polyhedra
+Secure Settlement
+Selective Disclosure
+Private Payments
+Stablecoin
+Feb 2, 2026
+Proof of Love: Ocash Valentine&#x27;s Day Campaign
+Ocash
+Privacy
+OcashProofOfLove</pre>
+</body>
+</html>

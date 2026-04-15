@@ -1,0 +1,11 @@
+generated_at_utc: 2026-04-04T17:28:47Z
+repo_root: /Users/espejelomar/StarkNet/zk-ai/llm-provable-computer-codex
+git_commit: 58bb05fdd57ee9816e5935eb004396fea6a9fac3
+git_commit_short: 58bb05f
+git_branch: codex/neural-programs-repro-bundle
+rustc: rustc 1.92.0 (ded5c06cf 2025-12-08)
+cargo: cargo 1.92.0 (344c4567c 2025-10-21)
+host_uname: Darwin TMWM-G5FXKKXLXY 23.6.0 Darwin Kernel Version 23.6.0: Thu Apr 24 20:29:27 PDT 2025; root:xnu-10063.141.1.705.2~1/RELEASE_ARM64_T6030 arm64
+stark_profile_for_proofs: production-v1
+proof_max_steps: 256
+include_fibonacci_proof: 1

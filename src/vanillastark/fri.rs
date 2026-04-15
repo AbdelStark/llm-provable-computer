@@ -254,19 +254,19 @@ impl Fri {
         let mut roots = Vec::new();
         let mut alphas = Vec::new();
         for _ in 0..num_rounds {
-            if let ProofObject::Bytes(root) = proof_stream.pull() {
+            if let Some(ProofObject::Bytes(root)) = proof_stream.pull() {
                 roots.push(root);
             } else {
-                panic!("expected Bytes for Merkle root");
+                return false;
             }
             alphas.push(FieldElement::sample(&proof_stream.verifier_fiat_shamir()));
         }
 
         // Extract last codeword
-        let last_codeword = if let ProofObject::Codeword(cw) = proof_stream.pull() {
+        let last_codeword = if let Some(ProofObject::Codeword(cw)) = proof_stream.pull() {
             cw
         } else {
-            panic!("expected Codeword");
+            return false;
         };
 
         // Check if it matches the given root
@@ -320,10 +320,10 @@ impl Fri {
             let mut bb = Vec::new();
             let mut cc = Vec::new();
             for s in 0..self.num_colinearity_tests {
-                let (ay, by, cy) = if let ProofObject::Triple(a, b, c) = proof_stream.pull() {
+                let (ay, by, cy) = if let Some(ProofObject::Triple(a, b, c)) = proof_stream.pull() {
                     (a, b, c)
                 } else {
-                    panic!("expected Triple");
+                    return false;
                 };
                 aa.push(ay);
                 bb.push(by);
@@ -346,26 +346,26 @@ impl Fri {
 
             // Verify authentication paths
             for i in 0..self.num_colinearity_tests {
-                let path_a = if let ProofObject::Path(p) = proof_stream.pull() {
+                let path_a = if let Some(ProofObject::Path(p)) = proof_stream.pull() {
                     p
                 } else {
-                    panic!("expected Path")
+                    return false;
                 };
                 if !Merkle::verify(&roots[r], a_indices[i], &path_a, &aa[i].to_bytes_str()) {
                     return false;
                 }
-                let path_b = if let ProofObject::Path(p) = proof_stream.pull() {
+                let path_b = if let Some(ProofObject::Path(p)) = proof_stream.pull() {
                     p
                 } else {
-                    panic!("expected Path")
+                    return false;
                 };
                 if !Merkle::verify(&roots[r], b_indices[i], &path_b, &bb[i].to_bytes_str()) {
                     return false;
                 }
-                let path_c = if let ProofObject::Path(p) = proof_stream.pull() {
+                let path_c = if let Some(ProofObject::Path(p)) = proof_stream.pull() {
                     p
                 } else {
-                    panic!("expected Path")
+                    return false;
                 };
                 if !Merkle::verify(&roots[r + 1], c_indices[i], &path_c, &cc[i].to_bytes_str()) {
                     return false;

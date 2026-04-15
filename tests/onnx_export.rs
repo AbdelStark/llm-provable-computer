@@ -50,6 +50,21 @@ fn shipped_cases() -> Vec<(&'static str, TransformerVmConfig, usize)> {
             TransformerVmConfig::default(),
             128,
         ),
+        (
+            "programs/dot_product.tvm",
+            TransformerVmConfig::default(),
+            128,
+        ),
+        (
+            "programs/matmul_2x2.tvm",
+            TransformerVmConfig::default(),
+            256,
+        ),
+        (
+            "programs/single_neuron.tvm",
+            TransformerVmConfig::default(),
+            128,
+        ),
         ("programs/multiply.tvm", TransformerVmConfig::default(), 256),
         (
             "programs/stack_roundtrip.tvm",
@@ -216,6 +231,21 @@ fn onnx_runtime_matches_native_transformer_and_burn_for_shipped_programs() {
         ),
         (
             "programs/memory_roundtrip.tvm",
+            TransformerVmConfig::default(),
+            128usize,
+        ),
+        (
+            "programs/dot_product.tvm",
+            TransformerVmConfig::default(),
+            128usize,
+        ),
+        (
+            "programs/matmul_2x2.tvm",
+            TransformerVmConfig::default(),
+            256usize,
+        ),
+        (
+            "programs/single_neuron.tvm",
             TransformerVmConfig::default(),
             128usize,
         ),

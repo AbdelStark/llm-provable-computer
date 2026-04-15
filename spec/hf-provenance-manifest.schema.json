@@ -1,0 +1,191 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.invalid/provable-transformer-vm/hf-provenance-manifest.schema.json",
+  "title": "Hugging Face provenance manifest",
+  "type": "object",
+  "required": [
+    "manifest_version",
+    "semantic_scope",
+    "commitment_hash_function",
+    "hub_repo",
+    "hub_revision",
+    "tokenizer",
+    "safetensors",
+    "onnx_export",
+    "release",
+    "limitations",
+    "commitments"
+  ],
+  "properties": {
+    "manifest_version": { "const": "hf-provenance-manifest-v4" },
+    "semantic_scope": { "const": "hf-release-provenance-boundary-v1" },
+    "commitment_hash_function": { "const": "blake2b-256" },
+    "hub_repo": { "type": "string", "minLength": 1 },
+    "hub_revision": { "type": "string", "minLength": 1 },
+    "tokenizer": { "$ref": "#/$defs/tokenizer" },
+    "safetensors": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/safetensors_file" }
+    },
+    "onnx_export": {
+      "anyOf": [
+        { "$ref": "#/$defs/onnx_export" },
+        { "type": "null" }
+      ]
+    },
+    "release": { "$ref": "#/$defs/release" },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string", "minLength": 1 }
+    },
+    "commitments": { "$ref": "#/$defs/commitments" }
+  },
+  "$defs": {
+    "hash_blake2b_256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "hash_sha256_hex": {
+      "type": "string",
+      "pattern": "^[0-9a-fA-F]{64}$"
+    },
+    "file_commitment": {
+      "type": "object",
+      "required": ["path", "size_bytes", "blake2b_256", "sha256"],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "blake2b_256": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "sha256": { "$ref": "#/$defs/hash_sha256_hex" }
+      },
+      "additionalProperties": false
+    },
+    "safetensors_file": {
+      "type": "object",
+      "required": [
+        "path",
+        "size_bytes",
+        "blake2b_256",
+        "sha256",
+        "metadata_hash",
+        "tensor_count"
+      ],
+      "properties": {
+        "path": { "type": "string", "minLength": 1 },
+        "size_bytes": { "type": "integer", "minimum": 0 },
+        "blake2b_256": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "sha256": { "$ref": "#/$defs/hash_sha256_hex" },
+        "metadata_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "tensor_count": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "tokenizer": {
+      "type": "object",
+      "required": [
+        "tokenizer_id",
+        "tokenizer_revision",
+        "tokenizer_json",
+        "tokenizer_config",
+        "tokenization_transcript"
+      ],
+      "properties": {
+        "tokenizer_id": { "type": "string", "minLength": 1 },
+        "tokenizer_revision": { "type": "string", "minLength": 1 },
+        "tokenizer_json": {
+          "anyOf": [
+            { "$ref": "#/$defs/file_commitment" },
+            { "type": "null" }
+          ]
+        },
+        "tokenizer_config": {
+          "anyOf": [
+            { "$ref": "#/$defs/file_commitment" },
+            { "type": "null" }
+          ]
+        },
+        "tokenization_transcript": {
+          "anyOf": [
+            { "$ref": "#/$defs/file_commitment" },
+            { "type": "null" }
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "onnx_export": {
+      "type": "object",
+      "required": ["exporter", "exporter_version", "graph", "metadata", "external_data_files"],
+      "properties": {
+        "exporter": { "type": "string", "minLength": 1 },
+        "exporter_version": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "graph": { "$ref": "#/$defs/file_commitment" },
+        "metadata": {
+          "anyOf": [
+            { "$ref": "#/$defs/file_commitment" },
+            { "type": "null" }
+          ]
+        },
+        "external_data_files": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/file_commitment" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "release": {
+      "type": "object",
+      "required": ["model_card", "doi", "datasets", "notes"],
+      "properties": {
+        "model_card": {
+          "anyOf": [
+            { "$ref": "#/$defs/file_commitment" },
+            { "type": "null" }
+          ]
+        },
+        "doi": {
+          "anyOf": [
+            { "type": "string", "minLength": 1 },
+            { "type": "null" }
+          ]
+        },
+        "datasets": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "notes": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 }
+        }
+      },
+      "additionalProperties": false
+    },
+    "commitments": {
+      "type": "object",
+      "required": [
+        "hub_binding_hash",
+        "tokenizer_hash",
+        "safetensors_manifest_hash",
+        "onnx_export_hash",
+        "release_metadata_hash",
+        "limitations_hash"
+      ],
+      "properties": {
+        "hub_binding_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "tokenizer_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "safetensors_manifest_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "onnx_export_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "release_metadata_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "limitations_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,85 @@
+; Gemma-inspired fixed-shape block checksum (v4).
+; Extends gemma_block_v3 with shared-table lookup facts:
+; two normalization rows and two bounded binary-step activation rows.
+.memory 21
+.init 0 1
+.init 1 1
+.init 2 2
+.init 3 0
+.init 4 0
+.init 5 2
+.init 6 2
+.init 7 -4
+.init 8 0
+.init 9 2
+.init 10 0
+.init 11 0
+.init 12 0
+.init 13 0
+.init 14 0
+.init 15 0
+.init 16 0
+.init 17 0
+.init 18 0
+.init 19 0
+.init 20 0
+
+; local score = q dot k_local
+LOAD 0
+MULM 2
+STORE 10
+LOAD 1
+MULM 3
+ADDM 10
+STORE 10
+
+; global score = q dot k_global
+LOAD 0
+MULM 4
+STORE 11
+LOAD 1
+MULM 5
+ADDM 11
+STORE 11
+
+; grouped-query style weighted value mix
+LOAD 10
+MULM 6
+STORE 12
+LOAD 11
+MULM 9
+ADDM 12
+STORE 12
+
+; residual projection
+LOAD 12
+ADDM 7
+STORE 8
+
+; primary normalization row: norm_sq = output^2 = 16, inv_sqrt_q8 = 64
+LOAD 8
+MULM 8
+STORE 13
+LOADI 64
+STORE 14
+
+; primary activation row: input = 1 -> output = 1
+LOADI 1
+STORE 15
+LOADI 1
+STORE 16
+
+; secondary canonical normalization row: 4 -> 128
+LOADI 4
+STORE 17
+LOADI 128
+STORE 18
+
+; secondary canonical activation row: 0 -> 1
+LOADI 0
+STORE 19
+LOADI 1
+STORE 20
+
+LOAD 13
+HALT

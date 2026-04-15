@@ -1,0 +1,36 @@
+; Dot product of two 4-element vectors.
+; a = [1, 2, 3, 4], b = [5, 6, 7, 8]
+; Expected: 1*5 + 2*6 + 3*7 + 4*8 = 70
+; Result is stored in MEM[9] and loaded into ACC before HALT.
+.memory 10
+.init 0 1
+.init 1 2
+.init 2 3
+.init 3 4
+.init 4 5
+.init 5 6
+.init 6 7
+.init 7 8
+.init 9 0
+
+LOAD 0
+MULM 4
+STORE 9
+
+LOAD 1
+MULM 5
+ADDM 9
+STORE 9
+
+LOAD 2
+MULM 6
+ADDM 9
+STORE 9
+
+LOAD 3
+MULM 7
+ADDM 9
+STORE 9
+
+LOAD 9
+HALT

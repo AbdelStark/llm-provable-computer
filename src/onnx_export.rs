@@ -43,12 +43,14 @@ pub enum OnnxInstructionRead {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OnnxInputLayoutEntry {
     pub index: usize,
     pub name: String,
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OnnxInstructionMetadata {
     pub pc: u8,
     pub layer_idx: usize,
@@ -58,6 +60,7 @@ pub struct OnnxInstructionMetadata {
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
+#[serde(deny_unknown_fields)]
 pub struct OnnxProgramMetadata {
     pub format_version: u32,
     pub ir_version: i64,
@@ -71,6 +74,183 @@ pub struct OnnxProgramMetadata {
     pub config: TransformerVmConfig,
     pub program: Program,
     pub instructions: Vec<OnnxInstructionMetadata>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StrictOnnxInputLayoutEntry {
+    index: usize,
+    name: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StrictOnnxInstructionMetadata {
+    pc: u8,
+    layer_idx: usize,
+    instruction: Instruction,
+    model_file: String,
+    memory_read: serde_json::Value,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StrictTransformerVmConfig {
+    d_model: usize,
+    num_heads: usize,
+    num_layers: usize,
+    vocab_size: usize,
+    max_seq_len: usize,
+    ff_dim: usize,
+    attention_mode: crate::config::Attention2DMode,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StrictProgram {
+    instructions: Vec<Instruction>,
+    initial_memory: Vec<i16>,
+}
+
+#[derive(Debug, Deserialize)]
+#[serde(deny_unknown_fields)]
+struct StrictOnnxProgramMetadata {
+    format_version: u32,
+    ir_version: i64,
+    opset_version: i64,
+    input_dim: usize,
+    output_dim: usize,
+    input_encoding: String,
+    output_encoding: String,
+    input_layout: Vec<StrictOnnxInputLayoutEntry>,
+    output_layout: Vec<String>,
+    config: StrictTransformerVmConfig,
+    program: StrictProgram,
+    instructions: Vec<StrictOnnxInstructionMetadata>,
+}
+
+impl From<StrictOnnxInputLayoutEntry> for OnnxInputLayoutEntry {
+    fn from(value: StrictOnnxInputLayoutEntry) -> Self {
+        Self {
+            index: value.index,
+            name: value.name,
+        }
+    }
+}
+
+impl TryFrom<StrictOnnxInstructionMetadata> for OnnxInstructionMetadata {
+    type Error = VmError;
+
+    fn try_from(value: StrictOnnxInstructionMetadata) -> Result<Self> {
+        Ok(Self {
+            pc: value.pc,
+            layer_idx: value.layer_idx,
+            instruction: value.instruction,
+            model_file: value.model_file,
+            memory_read: parse_strict_memory_read(value.memory_read)?,
+        })
+    }
+}
+
+impl From<StrictTransformerVmConfig> for TransformerVmConfig {
+    fn from(value: StrictTransformerVmConfig) -> Self {
+        Self {
+            d_model: value.d_model,
+            num_heads: value.num_heads,
+            num_layers: value.num_layers,
+            vocab_size: value.vocab_size,
+            max_seq_len: value.max_seq_len,
+            ff_dim: value.ff_dim,
+            attention_mode: value.attention_mode,
+        }
+    }
+}
+
+impl StrictProgram {
+    fn into_program(self) -> Result<Program> {
+        Program::from_parts(self.instructions, self.initial_memory)
+            .map_err(|err| VmError::Serialization(err.to_string()))
+    }
+}
+
+impl StrictOnnxProgramMetadata {
+    fn into_runtime_metadata(self) -> Result<OnnxProgramMetadata> {
+        Ok(OnnxProgramMetadata {
+            format_version: self.format_version,
+            ir_version: self.ir_version,
+            opset_version: self.opset_version,
+            input_dim: self.input_dim,
+            output_dim: self.output_dim,
+            input_encoding: self.input_encoding,
+            output_encoding: self.output_encoding,
+            input_layout: self
+                .input_layout
+                .into_iter()
+                .map(OnnxInputLayoutEntry::from)
+                .collect(),
+            output_layout: self.output_layout,
+            config: self.config.into(),
+            program: self.program.into_program()?,
+            instructions: self
+                .instructions
+                .into_iter()
+                .map(OnnxInstructionMetadata::try_from)
+                .collect::<Result<Vec<_>>>()?,
+        })
+    }
+}
+
+fn parse_strict_memory_read(value: serde_json::Value) -> Result<OnnxInstructionRead> {
+    let object = value
+        .as_object()
+        .ok_or_else(|| VmError::Serialization("memory_read must be a JSON object".to_string()))?;
+    let kind = object
+        .get("kind")
+        .and_then(serde_json::Value::as_str)
+        .ok_or_else(|| VmError::Serialization("memory_read.kind must be a string".to_string()))?;
+
+    match kind {
+        "none" => {
+            if object.len() != 1 {
+                return Err(VmError::Serialization(
+                    "unknown field in memory_read none variant".to_string(),
+                ));
+            }
+            Ok(OnnxInstructionRead::None)
+        }
+        "stack_top" => {
+            if object.len() != 1 {
+                return Err(VmError::Serialization(
+                    "unknown field in memory_read stack_top variant".to_string(),
+                ));
+            }
+            Ok(OnnxInstructionRead::StackTop)
+        }
+        "direct" => {
+            if object.keys().any(|key| key != "kind" && key != "address") {
+                return Err(VmError::Serialization(
+                    "unknown field in memory_read direct variant".to_string(),
+                ));
+            }
+            let address = object
+                .get("address")
+                .and_then(serde_json::Value::as_u64)
+                .ok_or_else(|| {
+                    VmError::Serialization(
+                        "memory_read direct variant requires numeric address".to_string(),
+                    )
+                })?;
+            let address = u8::try_from(address).map_err(|_| {
+                VmError::Serialization(
+                    "memory_read direct variant address exceeds u8 range".to_string(),
+                )
+            })?;
+            Ok(OnnxInstructionRead::Direct { address })
+        }
+        _ => Err(VmError::Serialization(format!(
+            "unknown memory_read kind `{kind}`"
+        ))),
+    }
 }
 
 pub fn export_program_onnx(
@@ -132,7 +312,107 @@ pub fn load_onnx_program_metadata(path: &Path) -> Result<OnnxProgramMetadata> {
         path.to_path_buf()
     };
     let bytes = fs::read(metadata_path)?;
-    serde_json::from_slice(&bytes).map_err(|err| VmError::Serialization(err.to_string()))
+    let metadata: StrictOnnxProgramMetadata =
+        serde_json::from_slice(&bytes).map_err(|err| VmError::Serialization(err.to_string()))?;
+    let metadata = metadata.into_runtime_metadata()?;
+    validate_onnx_program_metadata(&metadata)?;
+    Ok(metadata)
+}
+
+fn validate_onnx_program_metadata(metadata: &OnnxProgramMetadata) -> Result<()> {
+    if metadata.format_version != FORMAT_VERSION {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata format_version {} does not match expected {}",
+            metadata.format_version, FORMAT_VERSION
+        )));
+    }
+    if metadata.ir_version != ONNX_IR_VERSION {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata ir_version {} does not match expected {}",
+            metadata.ir_version, ONNX_IR_VERSION
+        )));
+    }
+    if metadata.opset_version != ONNX_OPSET_VERSION {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata opset_version {} does not match expected {}",
+            metadata.opset_version, ONNX_OPSET_VERSION
+        )));
+    }
+    if metadata.input_dim != INPUT_DIM {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata input_dim {} does not match expected {}",
+            metadata.input_dim, INPUT_DIM
+        )));
+    }
+    if metadata.output_dim != ONNX_OUTPUT_DIM {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata output_dim {} does not match expected {}",
+            metadata.output_dim, ONNX_OUTPUT_DIM
+        )));
+    }
+    if metadata.input_encoding != "machine_input_v1" {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata input_encoding {} does not match machine_input_v1",
+            metadata.input_encoding
+        )));
+    }
+    if metadata.output_encoding != "transition_with_flags_v1" {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata output_encoding {} does not match transition_with_flags_v1",
+            metadata.output_encoding
+        )));
+    }
+    if metadata.input_layout != input_layout() {
+        return Err(VmError::InvalidConfig(
+            "ONNX metadata input_layout does not match the machine_input_v1 contract".to_string(),
+        ));
+    }
+    if metadata.output_layout != output_layout() {
+        return Err(VmError::InvalidConfig(
+            "ONNX metadata output_layout does not match the transition_with_flags_v1 contract"
+                .to_string(),
+        ));
+    }
+    if metadata.instructions.len() != metadata.program.len() {
+        return Err(VmError::InvalidConfig(format!(
+            "ONNX metadata instruction table length {} does not match program length {}",
+            metadata.instructions.len(),
+            metadata.program.len()
+        )));
+    }
+
+    for (index, instruction) in metadata.instructions.iter().enumerate() {
+        let expected_pc = u8::try_from(index).map_err(|_| {
+            VmError::InvalidConfig(format!(
+                "ONNX metadata instruction table exceeds u8 pc space at index {}",
+                index
+            ))
+        })?;
+        if instruction.pc != expected_pc {
+            return Err(VmError::InvalidConfig(format!(
+                "ONNX metadata instruction table is misaligned at index {}: found pc {}",
+                index, instruction.pc
+            )));
+        }
+
+        let expected_instruction = metadata.program.instruction_at(expected_pc)?;
+        if instruction.instruction != expected_instruction {
+            return Err(VmError::InvalidConfig(format!(
+                "ONNX metadata instruction table does not match embedded program at pc {}",
+                expected_pc
+            )));
+        }
+
+        let expected_model_file = instruction_model_file(index);
+        if instruction.model_file != expected_model_file {
+            return Err(VmError::InvalidConfig(format!(
+                "ONNX metadata model_file {} does not match expected {} for pc {}",
+                instruction.model_file, expected_model_file, expected_pc
+            )));
+        }
+    }
+
+    Ok(())
 }
 
 pub(crate) fn export_compiled_instruction_onnx(
@@ -806,6 +1086,7 @@ mod tests {
     };
 
     use super::*;
+    use crate::compiler::ProgramCompiler;
     use crate::config::TransformerVmConfig;
     use crate::memory::AddressedMemory;
     use crate::model::{
@@ -852,6 +1133,26 @@ mod tests {
             Instruction::JumpIfNotZero(6),
             Instruction::Halt,
         ]
+    }
+
+    fn sample_exported_program_metadata(name: &str) -> (PathBuf, OnnxProgramMetadata) {
+        let source = fs::read_to_string("programs/addition.tvm").expect("fixture");
+        let model = ProgramCompiler
+            .compile_source(&source, TransformerVmConfig::default())
+            .expect("compile model");
+        let export_dir = unique_temp_dir(name);
+        let metadata = export_program_onnx(&model, &export_dir).expect("export program");
+        (export_dir, metadata)
+    }
+
+    fn overwrite_metadata(export_dir: &Path, metadata: &OnnxProgramMetadata) {
+        let bytes = serde_json::to_vec_pretty(metadata).expect("serialize metadata");
+        fs::write(metadata_path(export_dir), bytes).expect("write metadata");
+    }
+
+    fn overwrite_metadata_json(export_dir: &Path, metadata: &serde_json::Value) {
+        let bytes = serde_json::to_vec_pretty(metadata).expect("serialize metadata json");
+        fs::write(metadata_path(export_dir), bytes).expect("write metadata");
     }
 
     fn load_plan(path: &Path) -> Arc<TypedRunnableModel> {
@@ -971,5 +1272,235 @@ mod tests {
         }
 
         let _ = fs::remove_dir_all(temp_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_wrong_format_version() {
+        let (export_dir, mut metadata) = sample_exported_program_metadata("onnx-metadata-format");
+        metadata.format_version = metadata.format_version.saturating_add(1);
+        overwrite_metadata(&export_dir, &metadata);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("wrong metadata format version should fail");
+        assert!(
+            err.to_string().contains("format_version"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_input_contract_drift() {
+        let (export_dir, mut metadata) =
+            sample_exported_program_metadata("onnx-metadata-input-contract");
+        metadata.input_layout[0].name = "tampered-input".to_string();
+        overwrite_metadata(&export_dir, &metadata);
+
+        let err =
+            load_onnx_program_metadata(&export_dir).expect_err("input contract drift should fail");
+        assert!(
+            err.to_string().contains("input_layout"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_output_contract_drift() {
+        let (export_dir, mut metadata) =
+            sample_exported_program_metadata("onnx-metadata-output-contract");
+        metadata.output_layout[0] = "tampered-output".to_string();
+        overwrite_metadata(&export_dir, &metadata);
+
+        let err =
+            load_onnx_program_metadata(&export_dir).expect_err("output contract drift should fail");
+        assert!(
+            err.to_string().contains("output_layout"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_instruction_table_instruction_drift() {
+        let (export_dir, mut metadata) =
+            sample_exported_program_metadata("onnx-metadata-instruction-drift");
+        let original = metadata.instructions[0].instruction;
+        metadata.instructions[0].instruction = if original == Instruction::Halt {
+            Instruction::Nop
+        } else {
+            Instruction::Halt
+        };
+        overwrite_metadata(&export_dir, &metadata);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("instruction-table drift should fail");
+        assert!(
+            err.to_string()
+                .contains("instruction table does not match embedded program"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_model_path_escape() {
+        let (export_dir, mut metadata) =
+            sample_exported_program_metadata("onnx-metadata-model-path");
+        metadata.instructions[0].model_file = "../escape.onnx".to_string();
+        overwrite_metadata(&export_dir, &metadata);
+
+        let err =
+            load_onnx_program_metadata(&export_dir).expect_err("path escape should fail to load");
+        assert!(
+            err.to_string().contains("model_file"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_unknown_top_level_field() {
+        let (export_dir, metadata) = sample_exported_program_metadata("onnx-metadata-extra-top");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json
+            .as_object_mut()
+            .expect("metadata object")
+            .insert(
+                "unexpected_field".to_string(),
+                serde_json::Value::Bool(true),
+            );
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("unknown top-level metadata field should fail");
+        assert!(
+            err.to_string().contains("unknown field"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_unknown_nested_config_field() {
+        let (export_dir, metadata) =
+            sample_exported_program_metadata("onnx-metadata-extra-config-field");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json["config"]["unexpected_field"] = serde_json::json!(7);
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("unknown nested config field should fail");
+        assert!(
+            err.to_string().contains("unknown field"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_unknown_nested_program_field() {
+        let (export_dir, metadata) =
+            sample_exported_program_metadata("onnx-metadata-extra-program-field");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json["program"]["unexpected_field"] = serde_json::json!(7);
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("unknown nested program field should fail");
+        assert!(
+            err.to_string().contains("unknown field"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_unknown_nested_memory_read_field() {
+        let (export_dir, metadata) =
+            sample_exported_program_metadata("onnx-metadata-extra-memory-read-field");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json["instructions"][0]["memory_read"]["unexpected_field"] = serde_json::json!(7);
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("unknown nested memory_read field should fail");
+        assert!(
+            err.to_string().contains("unknown field"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_unknown_direct_memory_read_field() {
+        let (export_dir, metadata) =
+            sample_exported_program_metadata("onnx-metadata-direct-memory-read-extra-field");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json["instructions"][0]["memory_read"] = serde_json::json!({
+            "kind": "direct",
+            "address": 0,
+            "unexpected_field": 7
+        });
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("unknown direct memory_read field should fail");
+        assert!(
+            err.to_string()
+                .contains("unknown field in memory_read direct variant"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_rejects_missing_direct_memory_read_address() {
+        let (export_dir, metadata) =
+            sample_exported_program_metadata("onnx-metadata-direct-memory-read-missing-address");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json["instructions"][0]["memory_read"] = serde_json::json!({
+            "kind": "direct"
+        });
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("missing direct memory_read address should fail");
+        assert!(
+            err.to_string()
+                .contains("memory_read direct variant requires numeric address"),
+            "unexpected error: {err}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
+    }
+
+    #[test]
+    fn load_onnx_program_metadata_maps_runtime_conversion_failures_to_serialization() {
+        let (export_dir, metadata) =
+            sample_exported_program_metadata("onnx-metadata-oversized-memory");
+        let mut metadata_json = serde_json::to_value(metadata).expect("metadata to json");
+        metadata_json["program"]["initial_memory"] =
+            serde_json::Value::Array((0..256).map(|_| serde_json::json!(0)).collect());
+        overwrite_metadata_json(&export_dir, &metadata_json);
+
+        let err = load_onnx_program_metadata(&export_dir)
+            .expect_err("oversized initial memory should fail");
+        assert!(
+            matches!(err, VmError::Serialization(_)),
+            "unexpected error variant: {err:?}"
+        );
+
+        let _ = fs::remove_dir_all(export_dir);
     }
 }

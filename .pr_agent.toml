@@ -1,0 +1,52 @@
+[github_app]
+pr_commands = ["/agentic_describe", "/agentic_review"]
+handle_push_trigger = true
+push_commands = ["/agentic_review"]
+feedback_on_draft_pr = false
+
+[config]
+publish_output = true
+publish_output_progress = false
+verbosity_level = 2
+use_repo_settings_file = true
+ignore_pr_labels = ["skip-review", "artifact-only", "docs-only", "wip"]
+
+[review]
+require_score_review = true
+require_tests_review = true
+require_estimate_effort_to_review = true
+final_update_message = true
+persistent_comment = true
+comment_severity_threshold = 1
+wikipedia_reference = false
+
+[review_agent]
+comments_location_policy = "both"
+inline_comments_severity_threshold = 1
+enable_help_text = false
+num_code_suggestions = 4
+extra_instructions = """
+Review aggressively for proof soundness, AIR and trace consistency, statement/backend version drift,
+overflow and index arithmetic, replay and carried-state invariants, denial-of-service surfaces in
+verification paths, missing failing-path or tamper-path tests, CI coverage loss, and documentation
+claim drift. Prefer high-signal findings only. Ignore vendored or generated artifacts unless they
+create a reproducibility, integrity, or supply-chain risk.
+"""
+
+[best_practices]
+enable_global_best_practices = false
+
+[auto_best_practices]
+enable_auto_best_practices = true
+utilize_auto_best_practices = true
+extra_instructions = "Bias toward proof-system correctness, verification cost bounding, and docs-to-code claim alignment. Do not generate generic style rules."
+
+[ignore]
+glob = [
+  "scripts/node_modules/**",
+  "docs/artifacts/**",
+  "docs/paper/artifacts/**",
+  "docs/paper/evidence/**",
+  "docs/paper/figures/**",
+  "compiled/**"
+]

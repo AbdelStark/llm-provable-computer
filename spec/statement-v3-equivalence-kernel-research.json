@@ -1,0 +1,8 @@
+{
+  "statement_version": "statement-v3-research-draft",
+  "semantic_scope": "multi_engine_trace_equivalence_kernel_with_rule_witnesses",
+  "fixed_point_profile_ref": "spec/fixed-point-semantics-v2.json",
+  "onnx_op_subset_ref": "spec/onnx-op-subset-v2.json",
+  "artifact_schema_ref": "spec/statement-v3-equivalence-kernel.schema.json",
+  "notes": "Research-stage multi-engine equivalence-kernel artifact over transformer/native/Burn/ONNX lockstep evidence, bounded trace rows, semantic canonical event rows, deterministic rule witnesses, and per-engine transition relation hashes with artifact-integrity verification of commitments, trace hashes, semantic canonical event-relation hashes, state-boundary consistency, final-state links, and transition hashes. This is not an e-graph saturation result, SMT-backed rewrite proof, randomized opaque-kernel test suite, or cryptographic proof of implementation equivalence."
+}

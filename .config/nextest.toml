@@ -1,0 +1,69 @@
+nextest-version = { required = "0.9.132", recommended = "0.9.132" }
+
+[profile.default]
+fail-fast = { max-fail = "all" }
+slow-timeout = { period = "60s", terminate-after = 2, grace-period = "10s" }
+leak-timeout = { period = "500ms", result = "fail" }
+status-level = "pass"
+final-status-level = "slow"
+failure-output = "immediate-final"
+success-output = "never"
+
+[profile.default.junit]
+path = "junit.xml"
+report-name = "nextest-default"
+store-success-output = false
+store-failure-output = true
+flaky-fail-status = "failure"
+
+[profile.ci]
+inherits = "default"
+status-level = "fail"
+final-status-level = "slow"
+slow-timeout = { period = "90s", terminate-after = 2, grace-period = "10s" }
+
+[profile.ci.junit]
+path = "junit.xml"
+report-name = "nextest-ci"
+store-success-output = false
+store-failure-output = true
+flaky-fail-status = "failure"
+
+[profile.ci-stwo]
+inherits = "ci"
+test-threads = "num-cpus"
+slow-timeout = { period = "180s", terminate-after = 2, grace-period = "15s" }
+
+[profile.ci-stwo.junit]
+path = "junit.xml"
+report-name = "nextest-ci-stwo"
+store-success-output = false
+store-failure-output = true
+flaky-fail-status = "failure"
+
+[test-groups]
+proof-heavy = { max-threads = 1 }
+
+[[profile.ci.overrides]]
+filter = 'test(/^(proof::tests::(addition_round_trips_through_stark_proof|small_loop_round_trips_through_stark_proof|stack_and_subroutine_round_trip_through_stark_proof|reexecution_verification_round_trips|proof_claim_includes_artifact_commitments|proof_claim_includes_equivalence_metadata|proof_serialization_round_trip|proof_serialization_backfills_vanilla_backend_for_legacy_json|verify_rejects_commitment_hash_function_mismatch|verify_rejects_commitment_mismatch|verify_rejects_commitment_scheme_version_mismatch|verify_rejects_invalid_stark_options_without_panic|verify_rejects_statement_scope_mismatch|verify_rejects_step_overflow_without_panic)|cli_can_prove_and_verify_stark_execution|cli_verify_stark_rejects_backend_override_mismatch|cli_verify_stark_rejects_malformed_proof_without_panic|cli_verify_stark_strict_policy_rejects_low_security_proof)$/)'
+threads-required = "num-test-threads"
+test-group = "proof-heavy"
+slow-timeout = { period = "300s", terminate-after = 2, grace-period = "15s" }
+
+[[profile.ci-stwo.overrides]]
+filter = 'test(/^(cli_can_prove_and_verify_stark_execution|cli_can_prove_and_verify_stwo_.*|cli_can_prepare_stwo_recursion_batch_manifest|cli_verify_stwo_decoding.*|cli_verify_stark_rejects_tampered_gemma_block_.*)$/)'
+threads-required = "num-test-threads"
+test-group = "proof-heavy"
+slow-timeout = { period = "240s", terminate-after = 2, grace-period = "15s" }
+
+[[profile.ci-stwo.overrides]]
+filter = 'test(/^(proof::tests::(addition_round_trips_through_stark_proof|small_loop_round_trips_through_stark_proof|stack_and_subroutine_round_trip_through_stark_proof|reexecution_verification_round_trips|proof_claim_includes_artifact_commitments|proof_claim_includes_equivalence_metadata|proof_serialization_round_trip|proof_serialization_backfills_vanilla_backend_for_legacy_json|verify_rejects_commitment_hash_function_mismatch|verify_rejects_commitment_mismatch|verify_rejects_commitment_scheme_version_mismatch|verify_rejects_invalid_stark_options_without_panic|verify_rejects_statement_scope_mismatch|verify_rejects_step_overflow_without_panic)|cli_can_prove_and_verify_stark_execution|cli_verify_stark_rejects_backend_override_mismatch|cli_verify_stark_rejects_malformed_proof_without_panic|cli_verify_stark_strict_policy_rejects_low_security_proof)$/)'
+threads-required = "num-test-threads"
+test-group = "proof-heavy"
+slow-timeout = { period = "300s", terminate-after = 2, grace-period = "15s" }
+
+[[profile.ci-stwo.overrides]]
+filter = 'test(/^(stwo_backend::lookup_prover::tests::phase3_binary_step_lookup_demo_round_trips_real_proof|stwo_backend::normalization_prover::tests::phase5_normalization_demo_round_trips_real_proof|stwo_backend::decoding::tests::phase12_oracle_matches_production_on_demo_chain|stwo_backend::decoding::tests::phase12_random_bounded_memories_accept_real_stwo_proof_and_match_oracle|stwo_backend::decoding::tests::phase12_real_stwo_prove_accepts_default_layout_demo_memories|stwo_backend::decoding::tests::phase13_real_stwo_prove_accepts_layout_matrix_demo_memories)$/)'
+threads-required = "num-test-threads"
+test-group = "proof-heavy"
+slow-timeout = { period = "240s", terminate-after = 2, grace-period = "15s" }

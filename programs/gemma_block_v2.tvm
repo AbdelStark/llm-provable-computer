@@ -1,0 +1,66 @@
+; Gemma-inspired fixed-shape block checksum (v2).
+; Same fixed arithmetic as gemma_block_v1, but the normalization row
+; is now intended to be bound inside the main serialized S-two proof payload.
+.memory 15
+.init 0 1
+.init 1 1
+.init 2 2
+.init 3 0
+.init 4 0
+.init 5 2
+.init 6 2
+.init 7 -4
+.init 8 0
+.init 9 2
+.init 10 0
+.init 11 0
+.init 12 0
+.init 13 0
+.init 14 0
+
+; local score = q dot k_local
+LOAD 0
+MULM 2
+STORE 10
+LOAD 1
+MULM 3
+ADDM 10
+STORE 10
+
+; global score = q dot k_global
+LOAD 0
+MULM 4
+STORE 11
+LOAD 1
+MULM 5
+ADDM 11
+STORE 11
+
+; grouped-query style weighted value mix
+LOAD 10
+MULM 6
+STORE 12
+LOAD 11
+MULM 9
+ADDM 12
+STORE 12
+
+; residual projection
+LOAD 12
+ADDM 7
+STORE 8
+
+; norm_sq = output^2
+LOAD 8
+MULM 8
+STORE 13
+
+; canonical lookup row for norm_sq = 16
+LOADI 64
+STORE 14
+
+; keep the v2 fixture distinct from v1 while preserving final state
+LOAD 13
+STORE 13
+LOAD 13
+HALT

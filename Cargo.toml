@@ -8,6 +8,9 @@ readme = "README.md"
 keywords = ["transformer", "vm", "attention", "compiler", "rust"]
 categories = ["compilers", "algorithms", "science"]
 
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(kani)'] }
+
 [[bin]]
 name = "tvm"
 path = "src/bin/tvm.rs"
@@ -16,6 +19,7 @@ path = "src/bin/tvm.rs"
 default = []
 burn-model = ["dep:burn"]
 onnx-export = ["dep:onnx-protobuf", "dep:protobuf", "dep:tract-onnx"]
+stwo-backend = ["dep:stwo", "dep:stwo-constraint-framework", "dep:flate2", "dep:libc"]
 full = ["burn-model", "onnx-export"]
 
 [dependencies]
@@ -24,12 +28,17 @@ blake2 = "0.10"
 burn = { version = "=0.20.1", features = ["ndarray"], optional = true }
 clap = { version = "4.5.38", features = ["derive"] }
 crossterm = "0.28.1"
+flate2 = { version = "1.1", optional = true }
+libc = { version = "0.2", optional = true }
 onnx-protobuf = { version = "0.2.3", optional = true }
-protobuf = { version = "=3.4.0", optional = true }
+protobuf = { version = "=3.7.2", optional = true }
 ratatui = "0.29.0"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
+sha2 = "0.10"
 sha3 = "0.10"
+stwo = { version = "2.2.0", default-features = false, features = ["std", "prover"], optional = true }
+stwo-constraint-framework = { version = "2.2.0", default-features = false, features = ["std", "prover"], optional = true }
 thiserror = "2.0.12"
 tract-onnx = { version = "0.23.0-dev.2", optional = true }
 
@@ -39,6 +48,11 @@ predicates = "3.1.3"
 rand = "0.8.5"
 criterion = { version = "0.5", features = ["html_reports"] }
 proptest = "1.6"
+jsonschema = { version = "0.17.1", default-features = false, features = ["draft202012"] }
+tempfile = "3.13"
+
+[patch.crates-io]
+onnx-protobuf = { path = "vendor/onnx-protobuf" }
 
 [[bench]]
 name = "hull_benchmark"

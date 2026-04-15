@@ -1,0 +1,290 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-provable-computer/spec/statement-v3-equivalence-kernel.schema.json",
+  "title": "Statement V3 Multi-Engine Equivalence Kernel Certificate",
+  "type": "object",
+  "required": [
+    "statement_version",
+    "semantic_scope",
+    "relation_format",
+    "fixed_point_profile",
+    "onnx_op_subset_version",
+    "onnx_op_subset_size",
+    "program_path",
+    "requested_max_steps",
+    "checked_steps",
+    "engines",
+    "rule_witnesses",
+    "frontend_runtime_semantics_registry",
+    "limitations",
+    "commitments"
+  ],
+  "properties": {
+    "statement_version": { "type": "string" },
+    "semantic_scope": { "type": "string" },
+    "relation_format": { "type": "string" },
+    "fixed_point_profile": { "type": "string" },
+    "onnx_op_subset_version": { "type": "string" },
+    "onnx_op_subset_size": { "type": "integer", "minimum": 1 },
+    "program_path": { "type": "string" },
+    "requested_max_steps": { "type": "integer", "minimum": 1 },
+    "checked_steps": { "type": "integer", "minimum": 0 },
+    "engines": {
+      "type": "array",
+      "minItems": 4,
+      "items": { "$ref": "#/$defs/engine_summary" }
+    },
+    "rule_witnesses": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/rule_witness" }
+    },
+    "frontend_runtime_semantics_registry": {
+      "$ref": "#/$defs/frontend_runtime_semantics_registry"
+    },
+    "limitations": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "type": "string" }
+    },
+    "commitments": {
+      "type": "object",
+      "required": [
+        "hash_function",
+        "statement_spec_hash",
+        "fixed_point_spec_hash",
+        "onnx_op_subset_hash",
+        "artifact_schema_hash",
+        "frontend_runtime_semantics_registry_hash",
+        "relation_format_hash",
+        "limitations_hash",
+        "program_hash",
+        "transformer_config_hash",
+        "onnx_metadata_hash",
+        "engine_summaries_hash",
+        "rule_witnesses_hash"
+      ],
+      "properties": {
+        "hash_function": { "type": "string" },
+        "statement_spec_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "fixed_point_spec_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "onnx_op_subset_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "artifact_schema_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "frontend_runtime_semantics_registry_hash": {
+          "$ref": "#/$defs/hash_blake2b_256_hex"
+        },
+        "relation_format_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "limitations_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "program_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "transformer_config_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "onnx_metadata_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "engine_summaries_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "rule_witnesses_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "hash_blake2b_256_hex": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "frontend_runtime_semantics_registry": {
+      "type": "object",
+      "required": [
+        "registry_version",
+        "semantic_scope",
+        "purpose",
+        "implemented_statuses",
+        "non_claim_statuses",
+        "lanes",
+        "global_non_claims"
+      ],
+      "properties": {
+        "registry_version": { "const": "frontend-runtime-semantics-registry-v1" },
+        "semantic_scope": { "const": "research_v3_frontend_runtime_claim_boundary" },
+        "purpose": { "type": "string" },
+        "implemented_statuses": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "const": "implemented" }
+        },
+        "non_claim_statuses": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "enum": ["research_watch", "not_implemented"] }
+        },
+        "lanes": {
+          "type": "array",
+          "minItems": 8,
+          "items": { "$ref": "#/$defs/frontend_runtime_lane" }
+        },
+        "global_non_claims": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string" }
+        }
+      },
+      "additionalProperties": false
+    },
+    "frontend_runtime_lane": {
+      "type": "object",
+      "required": [
+        "lane_id",
+        "ecosystem",
+        "role",
+        "status",
+        "artifact_binding",
+        "claim_boundary"
+      ],
+      "properties": {
+        "lane_id": { "type": "string", "minLength": 1 },
+        "ecosystem": { "type": "string", "minLength": 1 },
+        "role": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["implemented", "research_watch", "not_implemented"] },
+        "artifact_binding": { "type": "string", "minLength": 1 },
+        "claim_boundary": { "type": "string", "minLength": 1 }
+      },
+      "additionalProperties": false
+    },
+    "engine_summary": {
+      "type": "object",
+      "required": [
+        "name",
+        "steps",
+        "halted",
+        "trace_len",
+        "events_len",
+        "trace",
+        "canonical_events",
+        "final_state",
+        "trace_hash",
+        "event_relation_hash",
+        "final_state_hash"
+      ],
+      "properties": {
+        "name": { "type": "string" },
+        "steps": { "type": "integer", "minimum": 0 },
+        "halted": { "type": "boolean" },
+        "trace_len": { "type": "integer", "minimum": 1 },
+        "events_len": { "type": "integer", "minimum": 0 },
+        "trace": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "$ref": "#/$defs/machine_state" }
+        },
+        "canonical_events": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/canonical_event" }
+        },
+        "final_state": { "$ref": "#/$defs/machine_state" },
+        "trace_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "event_relation_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "final_state_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+      },
+      "additionalProperties": false
+    },
+    "canonical_event": {
+      "type": "object",
+      "required": [
+        "step",
+        "instruction",
+        "state_before_hash",
+        "state_after_hash"
+      ],
+      "properties": {
+        "step": { "type": "integer", "minimum": 1 },
+        "instruction": { "type": "string" },
+        "state_before_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "state_after_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+      },
+      "additionalProperties": false
+    },
+    "rule_witness": {
+      "type": "object",
+      "required": [
+        "step",
+        "rule_id",
+        "relation",
+        "instruction",
+        "participating_engines",
+        "state_before_hashes",
+        "state_after_hashes",
+        "engine_transition_hashes",
+        "canonical_transition_hash",
+        "validation"
+      ],
+      "properties": {
+        "step": { "type": "integer", "minimum": 1 },
+        "rule_id": { "type": "string" },
+        "relation": { "type": "string" },
+        "instruction": { "type": "string" },
+        "participating_engines": {
+          "type": "array",
+          "minItems": 4,
+          "items": { "type": "string" }
+        },
+        "state_before_hashes": {
+          "type": "object",
+          "minProperties": 4,
+          "additionalProperties": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+        },
+        "state_after_hashes": {
+          "type": "object",
+          "minProperties": 4,
+          "additionalProperties": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+        },
+        "engine_transition_hashes": {
+          "type": "object",
+          "minProperties": 4,
+          "additionalProperties": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+        },
+        "canonical_transition_hash": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "validation": {
+          "type": "object",
+          "required": [
+            "differential_lockstep",
+            "egraph_status",
+            "smt_status",
+            "randomized_testing_status"
+          ],
+          "properties": {
+            "differential_lockstep": { "type": "boolean" },
+            "egraph_status": { "type": "string" },
+            "smt_status": { "type": "string" },
+            "randomized_testing_status": { "type": "string" }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "machine_state": {
+      "type": "object",
+      "required": [
+        "pc",
+        "acc",
+        "sp",
+        "zero_flag",
+        "carry_flag",
+        "halted",
+        "memory"
+      ],
+      "properties": {
+        "pc": { "type": "integer", "minimum": 0 },
+        "acc": { "type": "integer" },
+        "sp": { "type": "integer", "minimum": 0 },
+        "zero_flag": { "type": "boolean" },
+        "carry_flag": { "type": "boolean" },
+        "halted": { "type": "boolean" },
+        "memory": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-provable-computer/spec/stwo-phase30-decoding-step-envelope-manifest.schema.json",
+  "title": "S-two Phase 30 Decoding Step Proof Envelope Manifest",
+  "type": "object",
+  "required": [
+    "proof_backend",
+    "manifest_version",
+    "semantic_scope",
+    "proof_backend_version",
+    "statement_version",
+    "source_chain_version",
+    "source_chain_semantic_scope",
+    "source_chain_commitment",
+    "layout",
+    "total_steps",
+    "chain_start_boundary_commitment",
+    "chain_end_boundary_commitment",
+    "step_envelopes_commitment",
+    "envelopes"
+  ],
+  "properties": {
+    "proof_backend": { "const": "stwo" },
+    "manifest_version": {
+      "const": "stwo-phase30-decoding-step-proof-envelope-manifest-v1"
+    },
+    "semantic_scope": {
+      "const": "stwo_execution_parameterized_decoding_step_proof_envelope_manifest"
+    },
+    "proof_backend_version": { "const": "stwo-phase12-decoding-family-v9" },
+    "statement_version": { "const": "statement-v1" },
+    "source_chain_version": { "const": "stwo-phase12-decoding-chain-v9" },
+    "source_chain_semantic_scope": {
+      "const": "stwo_execution_parameterized_proof_carrying_decoding_chain"
+    },
+    "source_chain_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "layout": { "$ref": "#/$defs/layout" },
+    "total_steps": { "type": "integer", "minimum": 1 },
+    "chain_start_boundary_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "chain_end_boundary_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "step_envelopes_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+    "envelopes": {
+      "type": "array",
+      "minItems": 1,
+      "items": { "$ref": "#/$defs/envelope" }
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "hash_blake2b_256_hex": {
+      "type": "string",
+      "minLength": 64,
+      "maxLength": 64,
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "layout": {
+      "type": "object",
+      "required": ["layout_version", "rolling_kv_pairs", "pair_width"],
+      "properties": {
+        "layout_version": { "const": "stwo-decoding-layout-v1" },
+        "rolling_kv_pairs": { "type": "integer", "minimum": 1 },
+        "pair_width": { "type": "integer", "minimum": 1 }
+      },
+      "additionalProperties": false
+    },
+    "envelope": {
+      "type": "object",
+      "required": [
+        "envelope_version",
+        "semantic_scope",
+        "proof_backend",
+        "proof_backend_version",
+        "statement_version",
+        "relation",
+        "layout_commitment",
+        "source_chain_commitment",
+        "step_index",
+        "input_boundary_commitment",
+        "output_boundary_commitment",
+        "input_lookup_rows_commitment",
+        "output_lookup_rows_commitment",
+        "shared_lookup_artifact_commitment",
+        "static_lookup_registry_commitment",
+        "proof_commitment",
+        "envelope_commitment"
+      ],
+      "properties": {
+        "envelope_version": {
+          "const": "stwo-phase30-decoding-step-proof-envelope-v1"
+        },
+        "semantic_scope": {
+          "const": "stwo_execution_parameterized_decoding_step_proof_envelope"
+        },
+        "proof_backend": { "const": "stwo" },
+        "proof_backend_version": { "const": "stwo-phase12-decoding-family-v9" },
+        "statement_version": { "const": "statement-v1" },
+        "relation": { "const": "decoding_step_v2" },
+        "layout_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "source_chain_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "step_index": { "type": "integer", "minimum": 0 },
+        "input_boundary_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "output_boundary_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "input_lookup_rows_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "output_lookup_rows_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "shared_lookup_artifact_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "static_lookup_registry_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "proof_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" },
+        "envelope_commitment": { "$ref": "#/$defs/hash_blake2b_256_hex" }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://llm-provable-computer/spec/statement-v2-one-step-certificate.schema.json",
+  "title": "Statement V2 One-Step Semantic Certificate",
+  "type": "object",
+  "required": [
+    "statement_version",
+    "semantic_scope",
+    "fixed_point_profile",
+    "onnx_op_subset_version",
+    "onnx_op_subset_size",
+    "program_path",
+    "checked_steps",
+    "instruction",
+    "layer_idx",
+    "matched",
+    "state_before",
+    "transformer_state_after",
+    "onnx_state_after",
+    "commitments"
+  ],
+  "properties": {
+    "statement_version": { "type": "string" },
+    "semantic_scope": { "type": "string" },
+    "fixed_point_profile": { "type": "string" },
+    "onnx_op_subset_version": { "type": "string" },
+    "onnx_op_subset_size": { "type": "integer", "minimum": 1 },
+    "program_path": { "type": "string" },
+    "checked_steps": { "type": "integer", "minimum": 1 },
+    "instruction": { "type": "string" },
+    "layer_idx": { "type": ["integer", "null"], "minimum": 0 },
+    "matched": { "type": "boolean" },
+    "state_before": { "$ref": "#/$defs/machine_state" },
+    "transformer_state_after": { "$ref": "#/$defs/machine_state" },
+    "onnx_state_after": { "$ref": "#/$defs/machine_state" },
+    "commitments": {
+      "type": "object",
+      "required": [
+        "hash_function",
+        "statement_spec_hash",
+        "fixed_point_spec_hash",
+        "onnx_op_subset_hash",
+        "artifact_schema_hash",
+        "program_hash",
+        "transformer_config_hash",
+        "onnx_metadata_hash",
+        "state_before_hash",
+        "transformer_state_after_hash",
+        "onnx_state_after_hash"
+      ],
+      "properties": {
+        "hash_function": { "type": "string" },
+        "statement_spec_hash": { "type": "string" },
+        "fixed_point_spec_hash": { "type": "string" },
+        "onnx_op_subset_hash": { "type": "string" },
+        "artifact_schema_hash": { "type": "string" },
+        "program_hash": { "type": "string" },
+        "transformer_config_hash": { "type": "string" },
+        "onnx_metadata_hash": { "type": "string" },
+        "state_before_hash": { "type": "string" },
+        "transformer_state_after_hash": { "type": "string" },
+        "onnx_state_after_hash": { "type": "string" }
+      },
+      "additionalProperties": false
+    }
+  },
+  "$defs": {
+    "machine_state": {
+      "type": "object",
+      "required": [
+        "pc",
+        "acc",
+        "sp",
+        "zero_flag",
+        "carry_flag",
+        "halted",
+        "memory"
+      ],
+      "properties": {
+        "pc": { "type": "integer", "minimum": 0 },
+        "acc": { "type": "integer" },
+        "sp": { "type": "integer", "minimum": 0 },
+        "zero_flag": { "type": "boolean" },
+        "carry_flag": { "type": "boolean" },
+        "halted": { "type": "boolean" },
+        "memory": {
+          "type": "array",
+          "items": { "type": "integer" }
+        }
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,72 @@
+; Gemma-inspired fixed-shape block checksum.
+; q = [1, 1]
+; local key = [2, 0], global key = [0, 2]
+; local value scalar = 2, global value scalar = 2
+; residual bias = -4
+;
+; score_local  = q · k_local  = 2
+; score_global = q · k_global = 2
+; mixed        = score_local * v_local + score_global * v_global = 8
+; output       = mixed + residual_bias = 4
+; norm_sq      = output^2 = 16
+; inv_sqrt_q8  = 64 (canonical Phase 5 normalization-table entry for norm_sq = 16)
+.memory 15
+.init 0 1
+.init 1 1
+.init 2 2
+.init 3 0
+.init 4 0
+.init 5 2
+.init 6 2
+.init 7 -4
+.init 8 0
+.init 9 2
+.init 10 0
+.init 11 0
+.init 12 0
+.init 13 0
+.init 14 0
+
+; local score = q dot k_local
+LOAD 0
+MULM 2
+STORE 10
+LOAD 1
+MULM 3
+ADDM 10
+STORE 10
+
+; global score = q dot k_global
+LOAD 0
+MULM 4
+STORE 11
+LOAD 1
+MULM 5
+ADDM 11
+STORE 11
+
+; grouped-query style weighted value mix
+LOAD 10
+MULM 6
+STORE 12
+LOAD 11
+MULM 9
+ADDM 12
+STORE 12
+
+; residual projection
+LOAD 12
+ADDM 7
+STORE 8
+
+; norm_sq = output^2
+LOAD 8
+MULM 8
+STORE 13
+
+; canonical lookup companion row for norm_sq = 16
+LOADI 64
+STORE 14
+
+LOAD 13
+HALT

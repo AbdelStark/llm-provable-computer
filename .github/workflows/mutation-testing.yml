@@ -1,0 +1,66 @@
+name: Mutation Testing
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+env:
+  MUTATION_TOOLCHAIN: nightly-2025-07-14
+
+jobs:
+  cargo-mutants:
+    name: cargo-mutants (${{ matrix.label }})
+    runs-on: ubuntu-22.04
+    timeout-minutes: 360
+    env:
+      MUTATION_SHARD: ${{ matrix.shard }}
+      MUTATION_TOOLCHAIN: ${{ env.MUTATION_TOOLCHAIN }}
+      MUTATION_BASELINE: skip
+      MUTATION_MIN_TEST_TIMEOUT: 60
+      MUTATION_TIMEOUT: 600
+      MUTATION_JOBS: 2
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - shard: "0/2"
+            label: "0-of-2"
+          - shard: "1/2"
+            label: "1-of-2"
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install Rust
+        uses: dtolnay/rust-toolchain@3c5f7ea28cd621ae0bf5283f0e981fb97b8a7af9
+        with:
+          toolchain: ${{ env.MUTATION_TOOLCHAIN }}
+
+      - name: Restore Rust cache
+        uses: Swatinem/rust-cache@42dc69e1aa15d09112580998cf2ef0119e2e91ae
+        with:
+          cache-bin: false
+
+      - name: Install cargo-mutants
+        run: |
+          rm -f "$CARGO_HOME/bin/cargo-mutants"
+          cargo install cargo-mutants --version 27.0.0 --locked --force
+
+      - name: Run full targeted mutation suite
+        run: |
+          chmod +x scripts/run_mutation_suite.sh
+          scripts/run_mutation_suite.sh
+
+      - name: Upload mutation artifacts
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: cargo-mutants-${{ matrix.label }}
+          path: mutants.out/
+          if-no-files-found: ignore
